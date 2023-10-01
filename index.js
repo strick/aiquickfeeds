@@ -2,41 +2,96 @@
 import express from 'express';
 import Parser from 'rss-parser';
 import cheerio from 'cheerio';
+import dotenv from 'dotenv';
+import sqlite3 from 'sqlite3';
+import expressLayouts from 'express-ejs-layouts';
+
+dotenv.config();
+
 import { getOpenAIResponse } from './utils/openaiHandler.js';
 
 const app = express();
-const port = 3000;
+const PORT = process.env.PORT || 3000;
+
+app.use(express.static('public'));
+app.set('view engine', 'ejs');
+
+// Use express-ejs-layouts middleware
+app.use(expressLayouts);
 
 const parser = new Parser();
 
-app.get('/rss', async (req, res) => {
-  const url = req.query.url;
-  if (!url) {
-    return res.status(400).send('URL is required as a query parameter.');
-  }
+// Array of RSS feed URLs
+const feedUrls = [
+  { url: 'https://techcrunch.com/category/artificial-intelligence/feed/', title: 'TechCrunch' },
+  { url: 'https://openai.com/blog/rss', title: 'OpenAI' }
+];
+
+app.get('/', async (req, res) => {
   try {
     const fetch = (await import('node-fetch')).default;
-    const response = await fetch(url);
-    const text = await response.text();
-    const feed = await parser.parseString(text);
-    let html = '<h1>' + feed.title + '</h1>';
-    html += '<ul>';
-    for (const item of feed.items) {
-      html += '<li><a href="' + item.link + '">' + item.title + '</a><br>';
-      const pageResponse = await fetch(item.link);
-      const pageText = await pageResponse.text();
-      const $ = cheerio.load(pageText);
+    const sqlite = sqlite3.verbose();
+    let db = new sqlite3.Database('./database.db');
 
-        html += $('article').text();
-         html += '</li>';
+    let feedItems = [];
+
+    for (const feedData of feedUrls) {
+      const response = await fetch(feedData.url);
+      const text = await response.text();
+      const feed = await parser.parseString(text);
+
+      for (const item of feed.items) {
+        let url = item.link;
+        let articleTitle = item.title;
+        let articleSummary = "";
+        let articleDate = new Date(item.pubDate || Date.now()); // Added date here
+
+        const row = await new Promise(resolve => {
+          db.get(`SELECT summary, url, title, feed_title, date FROM feed_summaries WHERE url = ?`, [url], (err, row) => {
+            if (err) throw err;
+            resolve(row);
+          });
+        });
+
+        if (row) {
+          articleSummary = row.summary;
+          articleTitle = row.title;
+          articleDate = new Date(row.date); // Assign date from database
+        } else {
+          const pageResponse = await fetch(item.link);
+          const pageText = await pageResponse.text();
+          const $ = cheerio.load(pageText);
+          articleSummary = await getOpenAIResponse($('article').text());
+
+          db.run(
+            `INSERT INTO feed_summaries (url, title, summary, feed_title, date) VALUES (?, ?, ?, ?, ?)`,
+            [url, articleTitle, articleSummary, feedData.title, articleDate],
+            (err) => {
+              if (err) throw err;
+            }
+          );
+        }
+
+        feedItems.push({
+          url: url,
+          title: articleTitle,
+          summary: articleSummary,
+          feedTitle: feedData.title,
+          date: articleDate // include the date here
+        });
+      }
     }
-    html += '</ul>';
-    res.send(html);
+
+    // sort feedItems by date in descending order
+    feedItems.sort((a, b) => b.date - a.date);
+
+    // render the EJS template and pass the feedItems
+    res.render('index', { feedItems, feedUrls });
   } catch (error) {
     res.status(500).send(error.message);
   }
 });
 
-app.listen(port, () => {
-  console.log(`Server is running at http://localhost:${port}`);
+app.listen(PORT, () => {
+  console.log(`Server is running at http://localhost:${PORT}`);
 });

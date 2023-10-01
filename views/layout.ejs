@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Quick Feeds</title> <!-- Use a variable for the title -->
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <div class="wrapper">
+        <!-- Sidebar section -->
+        <div class="sidebar">
+            <h2>Feeds</h2>
+            <% feedUrls.forEach(feed => { %>
+                <p><%= feed.title %></p>
+            <% }); %>
+        </div>
+
+        <!-- Main content section -->
+        <div class="container">
+            <!-- Content will be inserted here -->
+            <%- body %> 
+        </div>
+    </div>
+</body>
+</html>

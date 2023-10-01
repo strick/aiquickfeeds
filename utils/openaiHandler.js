@@ -2,18 +2,18 @@
 
 import OpenAI from 'openai';
 
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY
-});
-
 async function getOpenAIResponse(message) {
+
+    const openai = new OpenAI({
+        apiKey: process.env.OPENAI_API_KEY
+    });
 
     const chatMessages = [];
     
     chatMessages.push(
         {
             "role": "system",
-            "content": "You will be given text that is taken from an <article> tag of an AI RSS feed.  Your job is to summarize the article into three bullet points.  These bullets should not be longer than three sentences but should contain enough information to understand the article."
+            "content":  process.env.SYSTEM_PROMPT 
         }
     );
 
@@ -24,7 +24,7 @@ async function getOpenAIResponse(message) {
         }
     );
 
-    return await openai.chat.completions.create({
+    let responseMessage = await openai.chat.completions.create({
         model: "gpt-3.5-turbo-16k",
         messages: chatMessages,
         temperature: 1,
@@ -33,6 +33,8 @@ async function getOpenAIResponse(message) {
         frequency_penalty: 0,
         presence_penalty: 0,
     });
+
+    return responseMessage.choices[0].message.content;
 }
 
 export { getOpenAIResponse };
