@@ -56,7 +56,7 @@ app.get('/', async (req, res) => {
         if (row) {
           articleSummary = row.summary;
           articleTitle = row.title;
-          articleDate = new Date(row.date); // Assign date from database
+          articleDate = new Date(parseInt(row.date)); // Assign date from database
         } else {
           const pageResponse = await fetch(item.link);
           const pageText = await pageResponse.text();
@@ -71,7 +71,7 @@ app.get('/', async (req, res) => {
             }
           );
         }
-
+        
         feedItems.push({
           url: url,
           title: articleTitle,
