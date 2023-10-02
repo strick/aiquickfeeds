@@ -88,3 +88,15 @@ li {
 li:last-child {
     border-bottom: none;
 }
+
+/* Footer styles */
+.footer {
+    background-color: #2c2c3e; /* Background Color for Footer */
+    color: #e1e1e6; /* Text Color */
+    text-align: center;
+    padding: 20px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+}

@@ -25,7 +25,8 @@ const parser = new Parser();
 const feedUrls = [
   { url: 'https://techcrunch.com/category/artificial-intelligence/feed/', title: 'TechCrunch' },
   { url: 'https://openai.com/blog/rss', title: 'OpenAI' },
-  { url: 'https://library.educause.edu/topics/infrastructure-and-research-technologies/artificial-intelligence-ai?view=rss', title: 'EDUCAUSE'}
+  { url: 'https://library.educause.edu/topics/infrastructure-and-research-technologies/artificial-intelligence-ai?view=rss', title: 'EDUCAUSE'},
+  { url: 'https://hackernoon.com/tagged/ai/feed', title: 'HACKERNOON'}
 ];
 
 app.get('/', async (req, res) => {
