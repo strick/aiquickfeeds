@@ -26,7 +26,7 @@ const feedUrls = [
   { url: 'https://techcrunch.com/category/artificial-intelligence/feed/', title: 'TechCrunch' },
   { url: 'https://openai.com/blog/rss', title: 'OpenAI' },
   { url: 'https://library.educause.edu/topics/infrastructure-and-research-technologies/artificial-intelligence-ai?view=rss', title: 'EDUCAUSE'},
-  { url: 'https://hackernoon.com/tagged/ai/feed', title: 'HACKERNOON'},
+  //{ url: 'https://hackernoon.com/tagged/ai/feed', title: 'HACKERNOON'},
  /* { url: 'https://lifehacker.com/tech/ai', title: 'lifehacker', 
     cssSelector: 'div > div.sc-101yw2y-9 > div.sc-157agsr-0.jvChWP > main.sc-11qwj9y-1.iSAYTF > div.sc-11qwj9y-0.iMtYxk > div.sc-17uq8ex-0.fakHlO > article.sc-cw4lnv-0.ksZQxB.js_post_item[data-id][data-index][data-commerce-source] > div.sc-cw4lnv-13.hHSpAQ > div.sc-cw4lnv-10.blRKje > div.sc-cw4lnv-5.dYIPCV > a.sc-1out364-0.dPMosf.js_link[data-ga][href] > h2.sc-759qgu-0.cDAvZo.sc-cw4lnv-6.crvAWy'
   }*/
