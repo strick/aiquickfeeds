@@ -24,7 +24,8 @@ const parser = new Parser();
 // Array of RSS feed URLs
 const feedUrls = [
   { url: 'https://techcrunch.com/category/artificial-intelligence/feed/', title: 'TechCrunch' },
-  { url: 'https://openai.com/blog/rss', title: 'OpenAI' }
+  { url: 'https://openai.com/blog/rss', title: 'OpenAI' },
+  { url: 'https://library.educause.edu/topics/infrastructure-and-research-technologies/artificial-intelligence-ai?view=rss', title: 'EDUCAUSE'}
 ];
 
 app.get('/', async (req, res) => {
@@ -71,7 +72,7 @@ app.get('/', async (req, res) => {
             }
           );
         }
-        
+
         feedItems.push({
           url: url,
           title: articleTitle,
