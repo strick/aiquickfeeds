@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Quick Feeds</title> <!-- Use a variable for the title -->
     <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
 <body>
     <div class="wrapper">
@@ -13,11 +14,12 @@
             <h2>Feeds</h2>
             <% feedUrls.forEach((feed, index) => { %>
                 <p class="feed-toggle" data-feed-index="<%= index %>">
-                    <span class="toggle-icon">✔</span> 
+                    <i class="fas fa-eye toggle-icon"></i>
                     <%= feed.title %>
                 </p>
             <% }); %>
         </div>
+
 
 
         <!-- Main content section -->
@@ -35,15 +37,19 @@
     <script>
         document.querySelectorAll('.feed-toggle').forEach(feedToggle => {
             feedToggle.addEventListener('click', () => {
-                const feedIndex = feedToggle.getAttribute('data-feed-index');
                 feedToggle.classList.toggle('inactive');
-                feedToggle.querySelector('.toggle-icon').textContent = feedToggle.classList.contains('inactive') ? '✖' : '✔';
+                const icon = feedToggle.querySelector('.toggle-icon');
+                icon.classList.toggle('fa-eye');
+                icon.classList.toggle('fa-eye-slash');
+                // Toggle visibility of articles based on feed index
+                const feedIndex = feedToggle.getAttribute('data-feed-index');
                 document.querySelectorAll(`.article[data-feed-index="${feedIndex}"]`).forEach(article => {
                     article.style.display = article.style.display === 'none' ? '' : 'none';
                 });
             });
         });
     </script>
+    
     
 </body>
 </html>

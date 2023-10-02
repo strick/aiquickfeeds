@@ -101,9 +101,6 @@ li:last-child {
     box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
 }
 
-.feed-toggle {
-    cursor: pointer;
-}
 /*
 .feed-toggle.active {
     background-color: #ddd; 
@@ -113,12 +110,13 @@ li:last-child {
 .article[data-feed-index] {
     transition: opacity 0.5s ease;
 }
-
-.toggle-icon {
-    color: green;
+.feed-toggle {
+    cursor: pointer;
 }
 
-.feed-toggle.inactive .toggle-icon {
-    color: red;
-    content: "✖"; /* change the icon to cross when inactive */
+.toggle-icon {
+    color: #ffffff; /* Or any other color that matches your design */
+}
+.toggle-icon.inactive {
+    opacity: 0.5; /* You can make the icon semi-transparent when disabled */
 }
