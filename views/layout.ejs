@@ -11,10 +11,14 @@
         <!-- Sidebar section -->
         <div class="sidebar">
             <h2>Feeds</h2>
-            <% feedUrls.forEach(feed => { %>
-                <p><%= feed.title %></p>
+            <% feedUrls.forEach((feed, index) => { %>
+                <p class="feed-toggle" data-feed-index="<%= index %>">
+                    <span class="toggle-icon">✔</span> 
+                    <%= feed.title %>
+                </p>
             <% }); %>
         </div>
+
 
         <!-- Main content section -->
         <div class="container">
@@ -28,6 +32,18 @@
         <p>&copy; 2023 Brian Strickland. All rights reserved.</p>
     </div>
 
-
+    <script>
+        document.querySelectorAll('.feed-toggle').forEach(feedToggle => {
+            feedToggle.addEventListener('click', () => {
+                const feedIndex = feedToggle.getAttribute('data-feed-index');
+                feedToggle.classList.toggle('inactive');
+                feedToggle.querySelector('.toggle-icon').textContent = feedToggle.classList.contains('inactive') ? '✖' : '✔';
+                document.querySelectorAll(`.article[data-feed-index="${feedIndex}"]`).forEach(article => {
+                    article.style.display = article.style.display === 'none' ? '' : 'none';
+                });
+            });
+        });
+    </script>
+    
 </body>
 </html>
