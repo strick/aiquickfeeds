@@ -15,7 +15,7 @@ async function deleteData() {
     console.log(`Deleted ${this.changes} row(s) successfully!`);
   });
 
-  db.all(`SELECT summary FROM feed_summaries`, [], (err, rows) => {
+  db.all(`SELECT * FROM feed_summaries`, [], (err, rows) => {
     if (err) {
       throw err;
     }

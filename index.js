@@ -29,6 +29,16 @@ const feedUrls = [
    }*/
 ];
 
+async function getArticles(db) {
+  return new Promise(resolve => {
+    db.all(`SELECT summary, url, title, feed_title, date FROM feed_summaries`, [], (err, rows) => {
+      if (err) throw err;
+      resolve(rows);
+    });
+  });
+}
+
+
 async function checkDatabase(db, url) {
   return new Promise(resolve => {
     db.get(`SELECT summary, url, title, feed_title, date FROM feed_summaries WHERE url = ?`, [url], (err, row) => {
@@ -63,6 +73,38 @@ async function handleHackerNoon(url, $, db, feedData, articleTitle, articleDate)
 }
 
 app.get('/', async (req, res) => {
+
+  try {
+
+    const sqlite = sqlite3.verbose();
+    let db = new sqlite3.Database('./database.db');
+    let feedItems = [];
+
+    const rows = await getArticles(db);
+
+    rows.forEach((row) => {
+
+      feedItems.push({
+        url: row.url,
+        title: row.title,
+        feedTitle: row.feed_title,
+        date: new Date(parseInt(row.date)),
+        summary: row.summary
+      });
+      
+    });
+      
+
+    feedItems.sort((a, b) => b.date - a.date);
+    res.render('index', { feedItems, feedUrls });
+
+} catch (error) {
+  res.status(500).send(error.message);
+}
+
+});
+
+app.get('/sync', async (req, res) => {
   try {
     const sqlite = sqlite3.verbose();
     let db = new sqlite3.Database('./database.db');
