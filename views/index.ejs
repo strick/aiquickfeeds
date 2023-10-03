@@ -1,4 +1,3 @@
-<h1>AI Quick Feeds</h1>
 <% feedItems.forEach((item, index) => { %>
     <div class="article" data-feed-index="<%= feedUrls.findIndex(feed => feed.title === item.feedTitle) %>">
         <h2><a href="<%= item.url %>"><%= item.title %></a></h2>
