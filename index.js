@@ -23,15 +23,12 @@ const feedUrls = [
   { url: 'https://techcrunch.com/category/artificial-intelligence/feed/', title: 'TechCrunch' },
   { url: 'https://openai.com/blog/rss', title: 'OpenAI' },
   { url: 'https://library.educause.edu/topics/infrastructure-and-research-technologies/artificial-intelligence-ai?view=rss', title: 'EDUCAUSE' },
-  //{ url: 'https://hackernoon.com/tagged/ai/feed', title: 'HACKERNOON'},
-  /* { url: 'https://lifehacker.com/tech/ai', title: 'lifehacker', 
-     cssSelector: 'div > div.sc-101yw2y-9 > div.sc-157agsr-0.jvChWP > main.sc-11qwj9y-1.iSAYTF > div.sc-11qwj9y-0.iMtYxk > div.sc-17uq8ex-0.fakHlO > article.sc-cw4lnv-0.ksZQxB.js_post_item[data-id][data-index][data-commerce-source] > div.sc-cw4lnv-13.hHSpAQ > div.sc-cw4lnv-10.blRKje > div.sc-cw4lnv-5.dYIPCV > a.sc-1out364-0.dPMosf.js_link[data-ga][href] > h2.sc-759qgu-0.cDAvZo.sc-cw4lnv-6.crvAWy'
-   }*/
+  { url: 'https://hackernoon.com/tagged/ai/feed', title: 'HACKERNOON'},
 ];
 
 const nonFeedUrls = [
 
-  { url: 'https://lifehacker.com/tech/ai', title: 'lifehacker'}
+ { url: 'https://lifehacker.com/tech/ai', title: 'lifehacker'}
 ];
 
 async function getArticles(db) {
@@ -57,13 +54,15 @@ async function handleHackerNoon(url, $, db, feedData, articleTitle, articleDate)
   if ($('.story-title').length) {
     const articleContentDiv = $('main').nextAll('div:not([class]):first');
     if (articleContentDiv.length) {
-      const articleSummary = await getOpenAIResponse(articleContentDiv.text());
+      //const articleSummary = await getOpenAIResponse(articleContentDiv.text());
+      articleSummary = await getOpenAIResponse($('main > div:first-child > :first-child:not(.exclude-class)').text());
       db.run(
         `INSERT INTO feed_summaries (url, title, summary, feed_title, date) VALUES (?, ?, ?, ?, ?)`,
         [url, articleTitle, articleSummary, feedData.title, articleDate],
         (err) => {
           if (err) throw err;
         }
+
       );
     } else {
       console.log("Skipping hackernoon article as there is no content");
@@ -130,16 +129,29 @@ const processFeedItem = async (db, item, feedData) => {
       const pageText = await pageResponse.text();
       const $ = cheerio.load(pageText);
 
-      if (feedData.title === 'HACKERNOON') {
-          articleSummary = await handleHackerNoon(url, $, db, feedData, articleTitle, articleDate);
-          if (articleSummary === false) {
-              console.log("No article");
-              return null;
-          }
-      } else {
           console.log("New article found. Asking ChatGPT for summary");
+          //default
           //articleSummary = await getOpenAIResponse($('article').text());
-          articleSummary = await getOpenAIResponse($('main').text());
+          // need to hander based on each.
+
+          //hackernoon
+          if (feedData.title === 'HACKERNOON'){
+
+            let ignoreText = 'The Noonification';
+            if (!articleTitle.includes(ignoreText)) {
+              articleSummary = await getOpenAIResponse($('main > div:first-child > :first-child:not(.exclude-class)').text());
+            }
+
+          }
+          else if(feedData.title === 'lifehacker'){
+            // lifehacker
+            articleSummary = await getOpenAIResponse($('main').text());
+          }
+          else {
+            articleSummary = await getOpenAIResponse($('article').text());
+
+          }
+          
           console.log("Summary Added: " + articleSummary);
           db.run(
               `INSERT INTO feed_summaries (url, title, summary, feed_title, date) VALUES (?, ?, ?, ?, ?)`,
@@ -148,7 +160,7 @@ const processFeedItem = async (db, item, feedData) => {
                   if (err) throw err;
               }
           );
-      }
+      //}
   }
 
   return {
@@ -175,7 +187,7 @@ app.get('/sync', async (req, res) => {
           for (const item of feed.items) {
               const result = await processFeedItem(db, item, feedData);
               if (result) {
-                  console.log(result);
+                  //console.log(result);
                   feedItems.push(result);
               }
           }
