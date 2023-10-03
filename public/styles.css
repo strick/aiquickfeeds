@@ -24,6 +24,21 @@ body {
     padding: 20px;
     background-color: #2a2a3a; /* Set a background color for the sidebar */
 }
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    line-height: 1;
+    color: #e1e1e6;
+    cursor: pointer;
+}
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 
 .container {
     flex-grow: 1; /* Allow the container to take up the remaining space */

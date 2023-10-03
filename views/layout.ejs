@@ -13,6 +13,7 @@
         <button id="toggle-sidebar-btn" class="mobile-only">Toggle Feeds</button>
         <div class="sidebar">
             <h2>Feeds</h2>
+            <button id="close-sidebar-btn" class="close-btn">×</button> <!-- This is the close button -->
             <% feedUrls.forEach((feed, index) => { %>
                 <p class="feed-toggle" data-feed-index="<%= index %>">
                     <i class="fas fa-eye toggle-icon"></i>
@@ -55,6 +56,20 @@
             if (sidebar.style.display === 'none' || sidebar.style.display === '') {
                 sidebar.style.display = 'block';
             } else {
+                sidebar.style.display = 'none';
+            }
+        });
+
+        document.getElementById('close-sidebar-btn').addEventListener('click', () => {
+            document.querySelector('.sidebar').style.display = 'none';
+        });
+
+        document.addEventListener('click', (e) => {
+            const sidebar = document.querySelector('.sidebar');
+            const isClickInsideSidebar = sidebar.contains(e.target);
+            const isClickOnToggleButton = e.target.id === 'toggle-sidebar-btn'; // Assuming you have this button for toggling.
+
+            if (!isClickInsideSidebar && !isClickOnToggleButton && sidebar.style.display === 'block') {
                 sidebar.style.display = 'none';
             }
         });
