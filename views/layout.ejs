@@ -59,10 +59,13 @@
                 sidebar.style.display = 'none';
             }
         });
-
+       
         document.getElementById('close-sidebar-btn').addEventListener('click', () => {
-            document.querySelector('.sidebar').style.display = 'none';
+            if (window.innerWidth < 768) {  /* Adjust 768px to your breakpoint */
+                document.querySelector('.sidebar').style.display = 'none';
+            }
         });
+
 
         document.addEventListener('click', (e) => {
             const sidebar = document.querySelector('.sidebar');
@@ -71,6 +74,16 @@
 
             if (!isClickInsideSidebar && !isClickOnToggleButton && sidebar.style.display === 'block') {
                 sidebar.style.display = 'none';
+            }
+        });
+
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 768) {  /* Adjust 768px to your breakpoint */
+                document.querySelector('.sidebar').style.display = 'block';
+            }
+            else if (window.innerWidth < 768) {
+                document.querySelector('.sidebar').style.display = 'none';
+                
             }
         });
 

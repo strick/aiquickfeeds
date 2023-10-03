@@ -160,6 +160,18 @@ li:last-child {
     background-color: #2196f3;
 }
 
+/* Always show the sidebar for larger screens */
+@media (min-width: 768px) { /* Adjust 768px to your breakpoint */
+    .sidebar {
+        display: block !important; /* Override any inline styles set by JavaScript */
+    }
+    
+    .close-btn {
+        display: none; /* Hide the close button on larger screens */
+    }
+}
+
+
 /* For screens smaller than 768 pixels */
 @media (max-width: 767px) {
     #toggle-sidebar-btn {
