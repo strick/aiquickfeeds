@@ -142,7 +142,8 @@ app.get('/sync', async (req, res) => {
             }
           } else {
             console.log("New article found!");
-            const articleSummary = await getOpenAIResponse($('article').text());
+            articleSummary = await getOpenAIResponse($('article').text());
+            console.log("Summary Added: " + articleSummary);
             db.run(
               `INSERT INTO feed_summaries (url, title, summary, feed_title, date) VALUES (?, ?, ?, ?, ?)`,
               [url, articleTitle, articleSummary, feedData.title, articleDate],
