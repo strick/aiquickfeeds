@@ -94,12 +94,14 @@ li:last-child {
     background-color: #2c2c3e; /* Background Color for Footer */
     color: #e1e1e6; /* Text Color */
     text-align: center;
-    padding: 20px;
+    padding: 10px; /* Reduced padding */
     position: fixed;
     bottom: 0;
     width: 100%;
     box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+    font-size: 0.9em; /* Reduced font-size; Adjust as needed */
 }
+
 
 .article-date {
     font-size: 0.8em; /* Adjust this value as needed */
@@ -125,4 +127,48 @@ li:last-child {
 }
 .toggle-icon.inactive {
     opacity: 0.5; /* You can make the icon semi-transparent when disabled */
+}
+
+
+/* Button styles (visible only on small screens) */
+#toggle-sidebar-btn {
+    display: none; /* Hide by default */
+    background-color: #2a2a3a;
+    color: #e1e1e6;
+    border: none;
+    padding: 10px;
+    border-radius: 4px;
+    margin: 10px;
+    cursor: pointer;
+}
+#toggle-sidebar-btn:hover {
+    background-color: #2196f3;
+}
+
+/* For screens smaller than 768 pixels */
+@media (max-width: 767px) {
+    #toggle-sidebar-btn {
+        display: block; /* Show the toggle button */
+    }
+
+    .sidebar {
+        display: none; /* Hide the sidebar by default */
+        width: 100%; /* Make it full width when visible */
+        position: fixed;
+        top: 0;
+        bottom: auto;
+        z-index: 1000; /* Ensure it appears on top */
+        overflow-y: auto; /* Enable scrolling if the content is long */
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        max-height: 50vh; /* Limiting the height */
+    }
+
+    .wrapper {
+        flex-direction: column; /* Stack vertically */
+    }
+
+    /* Adjust container for smaller screens */
+    .container {
+        padding-top: 60px; /* Adjust this as needed */
+    }
 }

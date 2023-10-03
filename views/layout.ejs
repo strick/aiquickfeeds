@@ -10,6 +10,7 @@
 <body>
     <div class="wrapper">
         <!-- Sidebar section -->
+        <button id="toggle-sidebar-btn" class="mobile-only">Toggle Feeds</button>
         <div class="sidebar">
             <h2>Feeds</h2>
             <% feedUrls.forEach((feed, index) => { %>
@@ -48,6 +49,16 @@
                 });
             });
         });
+
+        document.getElementById('toggle-sidebar-btn').addEventListener('click', () => {
+            const sidebar = document.querySelector('.sidebar');
+            if (sidebar.style.display === 'none' || sidebar.style.display === '') {
+                sidebar.style.display = 'block';
+            } else {
+                sidebar.style.display = 'none';
+            }
+        });
+
     </script>
     
     
