@@ -35,6 +35,9 @@
         <p>&copy; 2023 Brian Strickland  | <a href="mailto:bstrick@gmail.com">bstrick@gmail.com</a>. All rights reserved.</p>
     </div>
 
+    <button id="backToTop" title="Go to top">Top</button>
+
+
     <script>
         document.querySelectorAll('.feed-toggle').forEach(feedToggle => {
             feedToggle.addEventListener('click', () => {
@@ -85,6 +88,25 @@
 
             }
         });
+
+        document.addEventListener('DOMContentLoaded', function() {
+        const btn = document.getElementById("backToTop");
+
+        // Show the button after scrolling down 20px from the top
+        window.onscroll = function() {
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                btn.style.display = "block";
+            } else {
+                btn.style.display = "none";
+            }
+        };
+
+        // Scroll to top when the button is clicked
+        btn.onclick = function() {
+            document.body.scrollTop = 0; // For Safari
+            document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+        };
+    });
 
     </script>
     

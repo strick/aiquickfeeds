@@ -199,3 +199,24 @@ li:last-child {
         padding-top: 60px; /* Adjust this as needed */
     }
 }
+
+
+#backToTop {
+    display: none; /* Hidden by default */
+    position: fixed; 
+    bottom: 20px; /* Position from bottom */
+    right: 30px; /* Position from right */
+    z-index: 99; /* Ensure it sits over most other elements */
+    border: none; 
+    outline: none;
+    background-color: #1a75bc; /* You can change this to match your theme */
+    color: white; 
+    cursor: pointer; 
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 18px;
+}
+
+#backToTop:hover {
+    background-color: #555; /* Color when hovered over */
+}
