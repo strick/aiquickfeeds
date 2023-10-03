@@ -5,7 +5,7 @@ async function deleteData() {
   const sqlite = sqlite3.verbose();
   let db = new sqlite.Database('./database.db');
 
-  db.run(`DELETE FROM feed_summaries WHERE summary = ''`, function(err) {
+  db.run(`DELETE FROM feed_summaries WHERE title = 'Visa earmarks $100M to invest in generative AI companies'`, function(err) {
     if (err) {
       // Log the error message and throw the error
       console.error(err.message);

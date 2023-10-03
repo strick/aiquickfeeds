@@ -101,6 +101,12 @@ li:last-child {
     box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
 }
 
+.article-date {
+    font-size: 0.8em; /* Adjust this value as needed */
+    color: #a5a5a5; /* Optional: adjust color for lesser emphasis */
+}
+
+
 /*
 .feed-toggle.active {
     background-color: #ddd; 

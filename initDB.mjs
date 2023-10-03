@@ -4,7 +4,7 @@ import sqlite3 from 'sqlite3';
 async function initDB() {
   const sqlite = sqlite3.verbose();
   let db = new sqlite.Database('./database.db');
-
+/*
   db.run(`DROP TABLE IF EXISTS feed_summaries`, (err) => {
     if (err) {
       console.error(err.message);
@@ -28,6 +28,7 @@ async function initDB() {
   db.close((err) => {
     if (err) throw err;
   });
+  */
 }
 
 initDB();

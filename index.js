@@ -75,7 +75,7 @@ app.get('/', async (req, res) => {
       const feed = await parser.parseString(text);
 
       for (const item of feed.items) {
-        console.log("Checking item: " + feed.link);
+        //console.log("Checking item: " + feed.link);
         let url = item.link;
         let articleTitle = item.title;
         let articleDate = new Date(item.pubDate || Date.now());
@@ -99,6 +99,7 @@ app.get('/', async (req, res) => {
               continue;
             }
           } else {
+            console.log("New article found!");
             const articleSummary = await getOpenAIResponse($('article').text());
             db.run(
               `INSERT INTO feed_summaries (url, title, summary, feed_title, date) VALUES (?, ?, ?, ?, ?)`,
