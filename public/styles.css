@@ -80,7 +80,7 @@ a:hover {
 
 .feed-title {
     position: absolute;
-    top: 10px;
+    top: 0px;
     right: 10px;
     padding: 5px 10px;
     border-radius: 3px;
@@ -236,4 +236,12 @@ li:last-child {
 .feed-count {
     font-weight: bold;
     color: #333;
+}
+
+.feed-title-banner {
+    background-color: #3F51B5; /* You can adjust the color as per your theme */
+    color: #fff;
+    padding: 8px 16px;
+    margin: -8px -8px 16px -8px; /* Assuming your article class has a padding of 8px */
+    text-align: center;
 }

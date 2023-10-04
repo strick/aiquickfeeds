@@ -24,6 +24,7 @@ const feedUrls = [
   { url: 'https://openai.com/blog/rss', title: 'OpenAI' },
   { url: 'https://library.educause.edu/topics/infrastructure-and-research-technologies/artificial-intelligence-ai?view=rss', title: 'EDUCAUSE' },
   { url: 'https://hackernoon.com/tagged/ai/feed', title: 'HACKERNOON'},
+  { url: 'https://www.wired.com/feed/tag/ai/latest/rss', title: 'WIRED'},
   //{ url: 'https://feeds.feedburner.com/blogspot/gJZg', title: 'Google Research'}
 ];
 
@@ -179,7 +180,12 @@ const processFeedItem = async (db, item, feedData) => {
             articleSummary = await getOpenAIResponse($('article').text());
 
           }
-          
+
+          if(articleSummary === false){
+            console.log("ERROR on article: " + url);
+            return false;//res.status(500).send(error.message);
+          }
+
           console.log("Summary Added: " + articleSummary);
           db.run(
               `INSERT INTO feed_summaries (url, title, summary, feed_title, date) VALUES (?, ?, ?, ?, ?)`,
@@ -271,6 +277,10 @@ app.get('/sync', async (req, res) => {
             articleSummary = summary;
         } else {
           articleSummary = await getOpenAIResponse(page.content);
+
+          if(articleSummary === false){
+            continue;//res.status(500).send(error.message);
+          }
           console.log("Summary Added: " + articleSummary);
           db.run(
               `INSERT INTO feed_summaries (url, title, summary, feed_title, date) VALUES (?, ?, ?, ?, ?)`,

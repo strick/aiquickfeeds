@@ -24,17 +24,24 @@ async function getOpenAIResponse(message) {
         }
     );
 
-    let responseMessage = await openai.chat.completions.create({
-        model: "gpt-3.5-turbo-16k",
-        messages: chatMessages,
-        temperature: 1,
-        max_tokens: 256,
-        top_p: 1,
-        frequency_penalty: 0,
-        presence_penalty: 0,
-    });
+    try {
+        let responseMessage = await openai.chat.completions.create({
+            model: "gpt-3.5-turbo-16k",
+            messages: chatMessages,
+            temperature: 1,
+            max_tokens: 256,
+            top_p: 1,
+            frequency_penalty: 0,
+            presence_penalty: 0,
+        });
 
-    return responseMessage.choices[0].message.content;
+           
+        return responseMessage.choices[0].message.content;
+    }
+    catch (error) {
+        return false;
+    }
+ 
 }
 
 export { getOpenAIResponse };
