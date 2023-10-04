@@ -4,7 +4,7 @@ import sqlite3 from 'sqlite3';
 async function deleteData() {
   const sqlite = sqlite3.verbose();
   let db = new sqlite.Database('./database.db');
-
+/*
   db.run(`DELETE FROM feed_summaries WHERE feed_title = 'OpenAI Releases'`, function(err) {
     if (err) {
       // Log the error message and throw the error
@@ -14,7 +14,7 @@ async function deleteData() {
     // Log the number of rows deleted
     console.log(`Deleted ${this.changes} row(s) successfully!`);
   });
-/*
+
   db.all(`SELECT * FROM feed_summaries`, [], (err, rows) => {
     if (err) {
       throw err;

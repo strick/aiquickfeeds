@@ -40,7 +40,7 @@ const singlePageUrls = [
 
 async function getArticles(db) {
   return new Promise(resolve => {
-    db.all(`SELECT summary, url, title, feed_title, date FROM feed_summaries`, [], (err, rows) => {
+    db.all(`SELECT id, summary, url, title, feed_title, date FROM feed_summaries`, [], (err, rows) => {
       if (err) throw err;
       resolve(rows);
     });
@@ -97,10 +97,11 @@ app.get('/', async (req, res) => {
     rows.forEach((row) => {
       feedItems.push({
         url: row.url,
-        title: row.title,
+        title: row.title + " " + row.id,
         feedTitle: row.feed_title,
         date: new Date(parseInt(row.date)),
-        summary: row.summary
+        summary: row.summary,
+        id: row.id
       });
       
     });
@@ -108,7 +109,7 @@ app.get('/', async (req, res) => {
 
     feedItems.sort((a, b) => {
       let dateA = new Date(a.date);
-    let dateB = new Date(b.date);
+      let dateB = new Date(b.date);
 
     // Remove the time part from the dates for comparison
     dateA.setHours(0, 0, 0, 0);
@@ -118,11 +119,7 @@ app.get('/', async (req, res) => {
     if (dateA < dateB) return 1;
     if (dateA > dateB) return -1;
 
-    // If dates are the same, then secondary sort by feedTitle converted to yyyy-mm-dd format
-    const titleA = a.feedTitle.toLowerCase().split(' ').join('-');
-    const titleB = b.feedTitle.toLowerCase().split(' ').join('-');
-
-    return titleA.localeCompare(titleB);
+    return b.id - a.id;
   });
   
     const mergedUrls = [...feedUrls, ...nonFeedUrls, ...singlePageUrls];
