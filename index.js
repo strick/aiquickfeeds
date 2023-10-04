@@ -126,6 +126,12 @@ app.get('/', async (req, res) => {
   });
   
     const mergedUrls = [...feedUrls, ...nonFeedUrls, ...singlePageUrls];
+    mergedUrls.sort((a, b) => {
+      const titleA = a.title.toLowerCase().split(' ').join('-');
+      const titleB = b.title.toLowerCase().split(' ').join('-');
+  
+      return titleA.localeCompare(titleB);
+    });
 
     res.render('index', { feedItems, feedUrls: mergedUrls });
 
