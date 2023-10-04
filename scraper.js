@@ -5,24 +5,34 @@ import fs from 'fs';
 function getWSJArticleLinks(htmlContent) {
     const $ = cheerio.load(htmlContent);
     const articles = [];
-
-    $('div.css-bdm6mo').each((index, element) => {
-        const headlineLink = $(element).find('a.e1rxbks6.css-1me4f21-HeadlineLink');
-        const dateElement = $(element).find('.css-cw5wgv-TimeTag'); 
-        
-        if (headlineLink.length) {
-            let title = headlineLink.text().trim();
-
-            if (title.includes('.css-')) {
-                title = title.replace(/.*\}(.*)/, '$1').trim();
+  
+    $('article.jsx-adf13c9b2a104cce h2').each((index, element) => {
+        // Extracting title (without date) from the current subheading.
+        const titleWithDate = $(element).text().trim();
+        const dateMatch = titleWithDate.match(/\(.*?\)/g);
+        const pubDate = dateMatch ? dateMatch[0].replace(/\(|\)/g, '') : null;
+        const title = titleWithDate.replace(/\(.*?\)/, '').trim();
+  
+         // Extract content text following the title.
+        let content = "";
+        let nextElem = $(element).parent().next();
+        while(nextElem.length && !nextElem.find('h2').length) {
+            if(nextElem.text().trim()) {
+                content += nextElem.text().trim() + "\n";
             }
-            
-            const link = headlineLink.attr('href');
-            const date = dateElement.text().trim(); // Extract the date's text content.
-            articles.push({ title, link, date });
-
+            nextElem = nextElem.next();
         }
-    });
+
+
+        if (title && content) {
+            articles.push({ title, content, pubDate });
+        }
+  });
+
+
+    
+    
+  
 
     return articles;
 }

@@ -24,11 +24,18 @@ const feedUrls = [
   { url: 'https://openai.com/blog/rss', title: 'OpenAI' },
   { url: 'https://library.educause.edu/topics/infrastructure-and-research-technologies/artificial-intelligence-ai?view=rss', title: 'EDUCAUSE' },
   { url: 'https://hackernoon.com/tagged/ai/feed', title: 'HACKERNOON'},
+  //{ url: 'https://feeds.feedburner.com/blogspot/gJZg', title: 'Google Research'}
 ];
 
 const nonFeedUrls = [
 
- { url: 'https://lifehacker.com/tech/ai', title: 'lifehacker'}
+ { url: 'https://lifehacker.com/tech/ai', title: 'lifehacker'},
+ 
+];
+
+const singlePageUrls = [
+
+  { url: 'https://help.openai.com/en/articles/6825453-chatgpt-release-notes', title: 'OpenAI Releases'}
 ];
 
 async function getArticles(db) {
@@ -99,8 +106,26 @@ app.get('/', async (req, res) => {
     });
       
 
-    feedItems.sort((a, b) => b.date - a.date);
-    const mergedUrls = [...feedUrls, ...nonFeedUrls];
+    feedItems.sort((a, b) => {
+      let dateA = new Date(a.date);
+    let dateB = new Date(b.date);
+
+    // Remove the time part from the dates for comparison
+    dateA.setHours(0, 0, 0, 0);
+    dateB.setHours(0, 0, 0, 0);
+
+    // Primary sort by date (month, day, year only)
+    if (dateA < dateB) return 1;
+    if (dateA > dateB) return -1;
+
+    // If dates are the same, then secondary sort by feedTitle converted to yyyy-mm-dd format
+    const titleA = a.feedTitle.toLowerCase().split(' ').join('-');
+    const titleB = b.feedTitle.toLowerCase().split(' ').join('-');
+
+    return titleA.localeCompare(titleB);
+  });
+  
+    const mergedUrls = [...feedUrls, ...nonFeedUrls, ...singlePageUrls];
 
     res.render('index', { feedItems, feedUrls: mergedUrls });
 
@@ -129,7 +154,7 @@ const processFeedItem = async (db, item, feedData) => {
       const pageText = await pageResponse.text();
       const $ = cheerio.load(pageText);
 
-          console.log("New article found. Asking ChatGPT for summary");
+          console.log("New article found (" + item.title + "). Asking ChatGPT for summary");
           //default
           //articleSummary = await getOpenAIResponse($('article').text());
           // need to hander based on each.
@@ -179,7 +204,7 @@ app.get('/sync', async (req, res) => {
       let feedItems = [];
 
       for (const feedData of feedUrls) {
-          console.log("New feed: " + feedData.title);
+          console.log("RSS feed: " + feedData.title);
           const response = await fetch(feedData.url);
           const text = await response.text();
           const feed = await parser.parseString(text);
@@ -199,7 +224,11 @@ app.get('/sync', async (req, res) => {
           const text = await response.text();
           //const wjsUrls = await getWSJArticleLinks(text);
           console.log("Getting article links");
-          const articleUrls = await getArticleLinks(text);
+
+          let articleUrls = null;
+
+          
+          articleUrls = await getArticleLinks(text);
 
           for (const item of articleUrls) {
 
@@ -214,6 +243,47 @@ app.get('/sync', async (req, res) => {
               }
             
           }
+      }
+
+      console.log("handling single page feeds");
+      // Handle single page feeds
+      const response = await fetch('https://help.openai.com/en/articles/6825453-chatgpt-release-notes');
+      const text = await response.text();
+      const singlePageItems = await getOpenAIReleaseNotes(text);
+
+      for(const page of singlePageItems){
+
+        let articleSummary = '';
+        let url = page.url;
+        let articleTitle = page.title;
+        let articleDate = new Date(page.pubDate || Date.now());
+
+        console.log(url);
+        const row = await checkDatabase(db, url);
+        if (row) {
+            console.log("Single page article exists: " + url);
+            const { summary, title, date } = row;
+            articleTitle = title;
+            articleDate = new Date(parseInt(date));
+            articleSummary = summary;
+        } else {
+          articleSummary = await getOpenAIResponse(page.content);
+          console.log("Summary Added: " + articleSummary);
+          db.run(
+              `INSERT INTO feed_summaries (url, title, summary, feed_title, date) VALUES (?, ?, ?, ?, ?)`,
+              [url, articleTitle, articleSummary, 'OpenAI Releases', articleDate],
+              (err) => {
+                  if (err) throw err;
+              }
+          );         
+          feedItems.push({
+            url,
+            title: articleTitle,
+            feedTitle: 'OpenAI Releases',
+            date: articleDate,
+            summary: articleSummary
+          });
+        }        
       }
 
       feedItems.sort((a, b) => b.date - a.date);
@@ -249,24 +319,48 @@ async function getWSJArticleLinks(htmlContent) {
   return articles;
 }
 
+async function getOpenAIReleaseNotes(htmlContent){
+  const $ = cheerio.load(htmlContent);
+    const articles = [];
+  
+    $('article.jsx-adf13c9b2a104cce h2').each((index, element) => {
+      // Extracting title (without date) from the current subheading.
+      const titleWithDate = $(element).text().trim();
+      const dateMatch = titleWithDate.match(/\(.*?\)/g);
+      const pubDate = dateMatch ? dateMatch[0].replace(/\(|\)/g, '') : null;
+      const title = titleWithDate.replace(/\(.*?\)/, '').trim();
+      const url = 'https://help.openai.com/en/articles/6825453-chatgpt-release-notes#' + $(element).attr('id');
+
+       // Extract content text following the title.
+      let content = "";
+      let nextElem = $(element).parent().next();
+      while(nextElem.length && !nextElem.find('h2').length) {
+          if(nextElem.text().trim()) {
+              content += nextElem.text().trim() + "\n";
+          }
+          nextElem = nextElem.next();
+      }
+
+
+      if (title && content) {
+          articles.push({ title, content, pubDate, url });
+      }
+  }); 
+  
+    return articles;
+}
+
 async function getArticleLinks(htmlContent) {
   const $ = cheerio.load(htmlContent);
   const articles = [];
 
   $('article.sc-cw4lnv-0').each((index, element) => {
 
-    const headlineFigure = $(element).find('figure > a.sc-1out364-0');
-//console.log(headlineFeature);      
+      const headlineFigure = $(element).find('figure > a.sc-1out364-0');
 
-    const link = headlineFigure.attr('href');   // Extract the article's link.
-
-
-      const headlineLink = $(element).find('a.sc-1out364-0');
-      //const title = headlineLink.text().trim(); // Get the title text.
+      const link = headlineFigure.attr('href');   // Extract the article's link.
       const title = $(headlineFigure).find('img').attr('alt').trim();
-
       console.log(title + ": " + link);
-      //const link = headlineLink.attr('href');   // Extract the article's link.
       const dateElement = $(element).find('time');
       const pubDate = dateElement.attr('datetime') || dateElement.text().trim(); // Get the publication date.
 
