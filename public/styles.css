@@ -1,0 +1,261 @@
+/* General styles */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #1e1e2e; /* Dark Background */
+    color: #e1e1e6; /* Light Text */
+}
+
+.container {
+    /*margin: 0 auto;
+    max-width: 1200px;
+    padding: 20px;*/
+    flex-grow: 1; /* Allow the container to take up the remaining space */
+    padding: 20px;
+}
+
+.wrapper {
+    display: flex; /* Use flexbox to layout the sidebar and container side-by-side */
+}
+
+.sidebar {
+    flex-basis: 300px; /* Set the width of the sidebar */
+    padding: 20px;
+    background-color: #2a2a3a; /* Set a background color for the sidebar */
+}
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    line-height: 1;
+    color: #e1e1e6;
+    cursor: pointer;
+}
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
+.container {
+    flex-grow: 1; /* Allow the container to take up the remaining space */
+    padding: 20px;
+}
+
+
+h1 {
+    text-align: center;
+    color: #1a75bc; /* Dark Blue Color for Titles */
+    font-size: 2.5em;
+    margin-top: 50px;
+    margin-bottom: 20px;
+}
+
+h2 {
+    font-size: 1.8em;
+    margin-bottom: 10px;
+    color: #2196f3; /* Bright Blue Color for Headings */
+}
+
+a {
+    color: #B0B0B0; /* Gray Color for Links */
+}
+a:hover {
+    text-decoration: underline;
+    color: #808080; /* Dark Gray Color for Links on Hover */
+}
+
+
+.article {
+    position: relative;
+    background-color: #2c2c3e; /* Slightly Lighter Background for Articles */
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    margin-bottom: 20px;
+    padding: 20px;
+}
+
+.feed-title {
+    position: absolute;
+    top: 0px;
+    right: 10px;
+    padding: 5px 10px;
+    border-radius: 3px;
+    background-color: #007BFF;
+    color: #ffffff;
+    font-size: 0.8em;
+}
+
+ul {
+    margin: 0;
+    padding: 0;
+}
+
+li {
+    list-style-type: none;
+    padding: 8px 0;
+    border-bottom: 1px solid #3d3d4e; /* Border between List Items */
+}
+
+li:last-child {
+    border-bottom: none;
+}
+
+/* Footer styles */
+.footer {
+    background-color: #2c2c3e; /* Background Color for Footer */
+    color: #e1e1e6; /* Text Color */
+    text-align: center;
+    padding: 10px; /* Reduced padding */
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+    font-size: 0.9em; /* Reduced font-size; Adjust as needed */
+}
+
+
+.article-date {
+    font-size: 0.8em; /* Adjust this value as needed */
+    color: #a5a5a5; /* Optional: adjust color for lesser emphasis */
+}
+
+
+/*
+.feed-toggle.active {
+    background-color: #ddd; 
+    font-weight: bold;
+}
+*/
+.article[data-feed-index] {
+    transition: opacity 0.5s ease;
+}
+.feed-toggle {
+    cursor: pointer;
+}
+
+.toggle-icon {
+    color: #ffffff; /* Or any other color that matches your design */
+}
+.toggle-icon.inactive {
+    opacity: 0.5; /* You can make the icon semi-transparent when disabled */
+}
+
+
+/* Button styles (visible only on small screens) */
+#toggle-sidebar-btn {
+    display: none; /* Hide by default */
+    background-color: #2a2a3a;
+    color: #e1e1e6;
+    border: none;
+    padding: 10px;
+    border-radius: 4px;
+    margin: 10px;
+    cursor: pointer;
+}
+#toggle-sidebar-btn:hover {
+    background-color: #2196f3;
+}
+
+/* Always show the sidebar for larger screens */
+@media (min-width: 768px) { /* Adjust 768px to your breakpoint */
+    .sidebar {
+        display: block !important; /* Override any inline styles set by JavaScript */
+    }
+    
+    .close-btn {
+        display: none; /* Hide the close button on larger screens */
+    }
+}
+
+
+/* For screens smaller than 768 pixels */
+@media (max-width: 767px) {
+    #toggle-sidebar-btn {
+        display: block; /* Show the toggle button */
+    }
+
+    .sidebar {
+        display: none; /* Hide the sidebar by default */
+        width: 100%; /* Make it full width when visible */
+        position: fixed;
+        top: 0;
+        bottom: auto;
+        z-index: 1000; /* Ensure it appears on top */
+        overflow-y: auto; /* Enable scrolling if the content is long */
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        max-height: 50vh; /* Limiting the height */
+    }
+
+    .wrapper {
+        flex-direction: column; /* Stack vertically */
+    }
+
+    /* Adjust container for smaller screens */
+    .container {
+        padding-top: 60px; /* Adjust this as needed */
+    }
+}
+
+
+#backToTop {
+    display: none; /* Hidden by default */
+    position: fixed; 
+    bottom: 20px; /* Position from bottom */
+    right: 30px; /* Position from right */
+    z-index: 99; /* Ensure it sits over most other elements */
+    border: none; 
+    outline: none;
+    background-color: #1a75bc; /* You can change this to match your theme */
+    color: white; 
+    cursor: pointer; 
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 18px;
+}
+
+#backToTop:hover {
+    background-color: #555; /* Color when hovered over */
+}
+.count-container {
+    padding: 10px 0;
+    background-color: #f7f7f7;
+    border-bottom: 1px solid #e0e0e0;
+    text-align: center;
+}
+
+.count-container p {
+    margin: 0;
+    font-size: 16px;
+    color: #666;
+}
+
+.feed-count {
+    font-weight: bold;
+    color: #333;
+}
+
+.feed-title-banner {
+    background-color: #3F51B5; /* You can adjust the color as per your theme */
+    color: #fff;
+    padding: 8px 16px;
+    margin: -8px -8px 16px -8px; /* Assuming your article class has a padding of 8px */
+    text-align: center;
+}
+
+.share-button {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    padding: 5px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.share-button:hover {
+    background-color: #0056b3;
+}

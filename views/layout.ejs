@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-YC3RH194N5"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-YC3RH194N5');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Quick Feeds - Your Source for AI News & Updates</title>
+    <meta name="description" content="Stay updated with the latest AI news and insights. AI Quick Feeds curates top feeds for AI enthusiasts. More feeds added regularly!">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="canonical" href="https://aiquickfeeds.com" />
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="AI Quick Feeds - Your Source for AI News & Updates">
+    <meta property="og:description" content="Stay updated with the latest AI news and insights. AI Quick Feeds curates top feeds for AI enthusiasts. More feeds added regularly!">
+    <meta property="og:url" content="https://aiquickfeeds.com"">
+    <meta name="twitter:card" content="/ai.png">
+    <meta name="twitter:title" content="AI Quick Feeds - Your Source for AI News & Updates">
+    <meta name="twitter:description" content="Stay updated with the latest AI news and insights. AI Quick Feeds curates top feeds for AI enthusiasts. More feeds added regularly!">
+    <meta name="twitter:image" content="/ai.png">
+
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+    <div class="wrapper">
+        <!-- Sidebar section -->
+        <button id="toggle-sidebar-btn" class="mobile-only">Toggle Feeds</button>
+        <div class="sidebar">
+            <h2>Feeds</h2>
+            <button id="close-sidebar-btn" class="close-btn">×</button> <!-- This is the close button -->
+            <% feedUrls.forEach((feed, index) => { %>
+                <p class="feed-toggle" data-feed-index="<%= index %>">
+                    <i class="fas fa-eye toggle-icon"></i>
+                    <%= feed.title %>
+                </p>
+            <% }); %>
+        </div>
+
+   
+        <!-- Main content section -->
+        <div class="container">
+            <h1>AI Quick Feeds</h1>
+            <div class="count-container">
+                <p>Currently showcasing <span class="feed-count"><%= feedUrls.length %></span> feeds. More coming soon!</p>
+            </div>
+            <!-- Content will be inserted here -->
+            <%- body %> 
+        </div>
+    </div>
+
+
+
+
+    <!-- Footer Section -->
+    <div class="footer">
+        <p>&copy; 2023 Brian Strickland  | <a href="mailto:bstrick@gmail.com">bstrick@gmail.com</a>. All rights reserved.</p>
+    </div>
+
+
+
+    <script>
+        document.querySelectorAll('.feed-toggle').forEach(feedToggle => {
+            feedToggle.addEventListener('click', () => {
+                feedToggle.classList.toggle('inactive');
+                const icon = feedToggle.querySelector('.toggle-icon');
+                icon.classList.toggle('fa-eye');
+                icon.classList.toggle('fa-eye-slash');
+                // Toggle visibility of articles based on feed index
+                const feedIndex = feedToggle.getAttribute('data-feed-index');
+                document.querySelectorAll(`.article[data-feed-index="${feedIndex}"]`).forEach(article => {
+                    article.style.display = article.style.display === 'none' ? '' : 'none';
+                });
+            });
+        });
+
+        document.getElementById('toggle-sidebar-btn').addEventListener('click', () => {
+            const sidebar = document.querySelector('.sidebar');
+            if (sidebar.style.display === 'none' || sidebar.style.display === '') {
+                sidebar.style.display = 'block';
+            } else {
+                sidebar.style.display = 'none';
+            }
+        });
+       
+        document.getElementById('close-sidebar-btn').addEventListener('click', () => {
+            if (window.innerWidth < 768) {  /* Adjust 768px to your breakpoint */
+                document.querySelector('.sidebar').style.display = 'none';
+            }
+        });
+
+
+        document.addEventListener('click', (e) => {
+            const sidebar = document.querySelector('.sidebar');
+            const isClickInsideSidebar = sidebar.contains(e.target);
+            const isClickOnToggleButton = e.target.id === 'toggle-sidebar-btn'; // Assuming you have this button for toggling.
+
+            if (!isClickInsideSidebar && !isClickOnToggleButton && sidebar.style.display === 'block') {
+                sidebar.style.display = 'none';
+            }
+        });
+
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 768) {  /* Adjust 768px to your breakpoint */
+                document.querySelector('.sidebar').style.display = 'block';
+            }
+            else if (window.innerWidth < 768) {
+                document.querySelector('.sidebar').style.display = 'none';
+
+            }
+        });
+/*
+        document.addEventListener('DOMContentLoaded', function() {
+        const btn = document.getElementById("backToTop");
+
+        // Show the button after scrolling down 20px from the top
+        window.onscroll = function() {
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                btn.style.display = "block";
+            } else {
+                btn.style.display = "none";
+            }
+        };
+
+        // Scroll to top when the button is clicked
+        btn.onclick = function() {
+            document.body.scrollTop = 0; // For Safari
+            document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+        };
+    });
+*/
+function shareArticle(articleId, title) {
+  //  const articleElement = document.getElementById(articleId);
+
+    // Use the title directly for now
+    let summaryText = title;
+
+    if (navigator.share) {
+        navigator.share({
+            title: title,
+            text: summaryText,
+            url: "https://aiquickfeeds.com#" + parseInt(articleId)
+        }).then(() => {
+            console.log('Summary shared successfully');
+        }).catch((error) => {
+            console.log('Error sharing summary:', error);
+        });
+    } else {
+        alert('Your browser does not support native sharing. Please share using this link: ' + "https://aiquickfeeds.com#" + parseInt(articleId));
+    }
+}
+
+    </script>
+    
+    
+</body>
+</html>
