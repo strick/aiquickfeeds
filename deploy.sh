@@ -1,6 +1,11 @@
 #!/bin/bash
 
-LOGFILE="./logfile.log"  # Replace with your desired log file path
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+LOGFILE="$DIR/logs/logfile.log"
+
+DEPLOY_PROJECT_LOCATION=$DIR/static_site_deploy/
+
 exec > >(tee -a "$LOGFILE") 2>&1  # Redirect stdout and stderr to the log file
 
 if [ -t 1 ]; then
