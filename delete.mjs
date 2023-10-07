@@ -5,7 +5,11 @@ async function deleteData() {
   const sqlite = sqlite3.verbose();
   let db = new sqlite.Database('./database.db');
 /*
+<<<<<<< HEAD
   db.run(`DELETE FROM feed_summaries WHERE feed_title = 'OpenAI'`, function(err) {
+=======
+  db.run(`DELETE FROM feed_summaries WHERE feed_title = 'OpenAI Releases'`, function(err) {
+>>>>>>> origin/master
     if (err) {
       // Log the error message and throw the error
       console.error(err.message);

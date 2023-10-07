@@ -8,8 +8,11 @@ import expressLayouts from 'express-ejs-layouts';
 import { getOpenAIResponse } from './utils/openaiHandler.js';
 import fetch from 'node-fetch';
 
+<<<<<<< HEAD
 const DEBUG = process.env.DEBUG || false;
 
+=======
+>>>>>>> origin/master
 dotenv.config();
 
 const app = express();
@@ -27,7 +30,10 @@ const feedUrls = [
   { url: 'https://library.educause.edu/topics/infrastructure-and-research-technologies/artificial-intelligence-ai?view=rss', title: 'EDUCAUSE' },
   { url: 'https://hackernoon.com/tagged/ai/feed', title: 'HACKERNOON'},
   { url: 'https://www.wired.com/feed/tag/ai/latest/rss', title: 'WIRED'},
+<<<<<<< HEAD
   { url: 'https://www.ai.gov/feed/', title: 'NAIIO'}
+=======
+>>>>>>> origin/master
   //{ url: 'https://feeds.feedburner.com/blogspot/gJZg', title: 'Google Research'}
 ];
 
@@ -76,11 +82,19 @@ async function handleHackerNoon(url, $, db, feedData, articleTitle, articleDate)
 
       );
     } else {
+<<<<<<< HEAD
       if(DEBUG) console.log("Skipping hackernoon article as there is no content");
       return false;
     }
   } else {
     if(DEBUG) console.log("Skipping hackernoon article as 'story-title' class doesn't exist");
+=======
+      console.log("Skipping hackernoon article as there is no content");
+      return false;
+    }
+  } else {
+    console.log("Skipping hackernoon article as 'story-title' class doesn't exist");
+>>>>>>> origin/master
     return false;
   }
 
@@ -101,7 +115,11 @@ app.get('/', async (req, res) => {
     rows.forEach((row) => {
       feedItems.push({
         url: row.url,
+<<<<<<< HEAD
         title: row.title,
+=======
+        title: row.title + " " + row.id,
+>>>>>>> origin/master
         feedTitle: row.feed_title,
         date: new Date(parseInt(row.date)),
         summary: row.summary,
@@ -150,20 +168,35 @@ const processFeedItem = async (db, item, feedData) => {
   
 
   const row = await checkDatabase(db, url);
+<<<<<<< HEAD
 
   if (row) {
       //console.log("Article exists: " + url);
+=======
+  if (row) {
+      console.log("Article exists: " + url);
+>>>>>>> origin/master
       const { summary, title, date } = row;
       articleTitle = title;
       articleDate = new Date(parseInt(date));
       articleSummary = summary;
   } else {
+<<<<<<< HEAD
       console.log("Fetching new article (" + item.title + ").");
+=======
+>>>>>>> origin/master
       const pageResponse = await fetch(item.link);
       const pageText = await pageResponse.text();
       const $ = cheerio.load(pageText);
 
+<<<<<<< HEAD
 
+=======
+          console.log("New article found (" + item.title + "). Asking ChatGPT for summary");
+          //default
+          //articleSummary = await getOpenAIResponse($('article').text());
+          // need to hander based on each.
+>>>>>>> origin/master
 
           //hackernoon
           if (feedData.title === 'HACKERNOON'){
@@ -178,6 +211,7 @@ const processFeedItem = async (db, item, feedData) => {
             // lifehacker
             articleSummary = await getOpenAIResponse($('main').text());
           }
+<<<<<<< HEAD
           else if(feedData.title === 'OpenAI'){
 
             // Handle research paper abstracts
@@ -190,13 +224,19 @@ const processFeedItem = async (db, item, feedData) => {
               articleSummary = await getOpenAIResponse($('div#content').text());
             }
           }
+=======
+>>>>>>> origin/master
           else {
             articleSummary = await getOpenAIResponse($('article').text());
 
           }
 
           if(articleSummary === false){
+<<<<<<< HEAD
             console.log("ERROR on article (" + feedData.tile + "): " + url);
+=======
+            console.log("ERROR on article: " + url);
+>>>>>>> origin/master
             return false;//res.status(500).send(error.message);
           }
 
@@ -220,6 +260,7 @@ const processFeedItem = async (db, item, feedData) => {
   };
 };
 
+<<<<<<< HEAD
 function timeout(ms) {
   return new Promise((_, reject) => setTimeout(() => reject(new Error('Request timed out')), ms));
 }
@@ -238,6 +279,8 @@ async function fetchWithTimeout(url, ms = 10000) {
   }
 }
 
+=======
+>>>>>>> origin/master
 app.get('/sync', async (req, res) => {
   try {
       const sqlite = sqlite3.verbose();
@@ -245,12 +288,18 @@ app.get('/sync', async (req, res) => {
       let feedItems = [];
 
       for (const feedData of feedUrls) {
+<<<<<<< HEAD
         if(DEBUG) console.log("Fetching RSS feed: " + feedData.title);
           //const response = await fetch(feedData.url);
           const response = await fetchWithTimeout(feedData.url);
           if(response === false) continue;
           const text = await response.text();
           if(DEBUG) console.log("Parsing feed");
+=======
+          console.log("RSS feed: " + feedData.title);
+          const response = await fetch(feedData.url);
+          const text = await response.text();
+>>>>>>> origin/master
           const feed = await parser.parseString(text);
 
           for (const item of feed.items) {
@@ -263,6 +312,7 @@ app.get('/sync', async (req, res) => {
       }
 
       for (const feedData of nonFeedUrls) {
+<<<<<<< HEAD
         if(DEBUG) console.log("Fetching nonfeed: " + feedData.title);
           //const response = await fetch(feedData.url);
           const response = await fetchWithTimeout(feedData.url);
@@ -270,6 +320,13 @@ app.get('/sync', async (req, res) => {
           const text = await response.text();
           //const wjsUrls = await getWSJArticleLinks(text);
           if(DEBUG) console.log("Getting article links");
+=======
+          console.log("Fetching nonfeed: " + feedData.title);
+          const response = await fetch(feedData.url);
+          const text = await response.text();
+          //const wjsUrls = await getWSJArticleLinks(text);
+          console.log("Getting article links");
+>>>>>>> origin/master
 
           let articleUrls = null;
 
@@ -278,10 +335,15 @@ app.get('/sync', async (req, res) => {
 
           for (const item of articleUrls) {
 
+<<<<<<< HEAD
             if(DEBUG) console.log("Fetching: " + item.link);
               //const pageResponse = await fetch(item.link);
               const pageResponse = await fetchWithTimeout(feedData.url);
               if(pageResponse === false) continue;
+=======
+            console.log("Fetching: " + item.link);
+              const pageResponse = await fetch(item.link);
+>>>>>>> origin/master
               const pageText = await pageResponse.text();
               const $ = cheerio.load(pageText);   
               
@@ -293,6 +355,7 @@ app.get('/sync', async (req, res) => {
           }
       }
 
+<<<<<<< HEAD
       if(DEBUG) console.log("handling single page feeds");
       // Handle single page feeds
       //const response = await fetch('https://help.openai.com/en/articles/6825453-chatgpt-release-notes');
@@ -300,6 +363,12 @@ app.get('/sync', async (req, res) => {
       if(response !== false) {
       const text = await response.text();
       
+=======
+      console.log("handling single page feeds");
+      // Handle single page feeds
+      const response = await fetch('https://help.openai.com/en/articles/6825453-chatgpt-release-notes');
+      const text = await response.text();
+>>>>>>> origin/master
       const singlePageItems = await getOpenAIReleaseNotes(text);
 
       for(const page of singlePageItems){
@@ -309,10 +378,17 @@ app.get('/sync', async (req, res) => {
         let articleTitle = page.title;
         let articleDate = new Date(page.pubDate || Date.now());
 
+<<<<<<< HEAD
         if(DEBUG) console.log(url);
         const row = await checkDatabase(db, url);
         if (row) {
           if(DEBUG) console.log("Single page article exists: " + url);
+=======
+        console.log(url);
+        const row = await checkDatabase(db, url);
+        if (row) {
+            console.log("Single page article exists: " + url);
+>>>>>>> origin/master
             const { summary, title, date } = row;
             articleTitle = title;
             articleDate = new Date(parseInt(date));
@@ -323,9 +399,12 @@ app.get('/sync', async (req, res) => {
           if(articleSummary === false){
             continue;//res.status(500).send(error.message);
           }
+<<<<<<< HEAD
           
           console.log("Fetching new article (" + articleTitle + ").");
 
+=======
+>>>>>>> origin/master
           console.log("Summary Added: " + articleSummary);
           db.run(
               `INSERT INTO feed_summaries (url, title, summary, feed_title, date) VALUES (?, ?, ?, ?, ?)`,
@@ -343,10 +422,15 @@ app.get('/sync', async (req, res) => {
           });
         }        
       }
+<<<<<<< HEAD
     }
 
       feedItems.sort((a, b) => b.date - a.date);
       if(DEBUG) console.log("Done syncing");
+=======
+
+      feedItems.sort((a, b) => b.date - a.date);
+>>>>>>> origin/master
       res.render('index', { feedItems, feedUrls });
   } catch (error) {
       res.status(500).send(error.message);
@@ -420,7 +504,11 @@ async function getArticleLinks(htmlContent) {
 
       const link = headlineFigure.attr('href');   // Extract the article's link.
       const title = $(headlineFigure).find('img').attr('alt').trim();
+<<<<<<< HEAD
       if(DEBUG) console.log(title + ": " + link);
+=======
+      console.log(title + ": " + link);
+>>>>>>> origin/master
       const dateElement = $(element).find('time');
       const pubDate = dateElement.attr('datetime') || dateElement.text().trim(); // Get the publication date.
 

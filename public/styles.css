@@ -245,6 +245,7 @@ li:last-child {
     margin: -8px -8px 16px -8px; /* Assuming your article class has a padding of 8px */
     text-align: center;
 }
+<<<<<<< HEAD
 
 .share-button {
     background-color: #007BFF;
@@ -259,3 +260,5 @@ li:last-child {
 .share-button:hover {
     background-color: #0056b3;
 }
+=======
+>>>>>>> origin/master
