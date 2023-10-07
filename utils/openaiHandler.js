@@ -4,10 +4,7 @@ import OpenAI from 'openai';
 
 async function getOpenAIResponse(message) {
 
-<<<<<<< HEAD
     console.log("Communicating to OpenAI for response");
-=======
->>>>>>> origin/master
     const openai = new OpenAI({
         apiKey: process.env.OPENAI_API_KEY
     });
@@ -39,12 +36,8 @@ async function getOpenAIResponse(message) {
             presence_penalty: 0,
         });
 
-<<<<<<< HEAD
         
         console.log("Recieved response");
-=======
-           
->>>>>>> origin/master
         return responseMessage.choices[0].message.content;
     }
     catch (error) {

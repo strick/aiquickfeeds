@@ -31,13 +31,9 @@ dist/
 *.tgz
 .vscode/
 
-<<<<<<< HEAD
 tmp
 
 database.db
 database.db.backup
-=======
-database.db
->>>>>>> origin/master
 
 static_site_deploy
