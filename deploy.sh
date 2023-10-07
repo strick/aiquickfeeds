@@ -1,36 +1,55 @@
 #!/bin/bash
 
+LOGFILE="./logfile.log"  # Replace with your desired log file path
+exec > >(tee -a "$LOGFILE") 2>&1  # Redirect stdout and stderr to the log file
+
+if [ -t 1 ]; then
+    # Output is going to the terminal
+    RSS_OUTPUT=$(echo -e "\e[1m\e[33m")
+    RSS_OUTPUT_END=$(echo -e "\e[0m")
+else
+    # Output is being redirected or piped
+    RSS_OUTPUT=""
+    RSS_OUTPUT_END=""
+fi
+
 # Start the Node.js application in the background
 node index.js &
 # Get the process ID of the command we just ran (node index.js)
 NODE_PID=$!
 
-source .env || { echo "Error sourcing .env"; kill $NODE_PID; exit 1;}
+while ! nc -z localhost 3000; do   
+  sleep 0.1  # wait for 100ms before check again
+done
 
-echo "Begin feed sync"
+source .env || { echo $RSS_OUTPUT"Error sourcing .env"$RSS_OUTPUT_END; kill $NODE_PID; exit 1;}
+
+echo $RSS_OUTPUT"Begin feed sync"$RSS_OUTPUT_END
 wget $DEPLOY_HOST/sync
 if [[ $? -ne 0 ]]; then
-    echo "Error syncing feed."
+    echo $RSS_OUTPUT"Error syncing feed."$RSS_OUTPUT_END
     kill $NODE_PID
     exit 1
 fi
-echo "New articles have been sync'd"
+echo $RSS_OUTPUT"New articles have been sync'd"$RSS_OUTPUT_END
 
-echo "Building project"
+echo $RSS_OUTPUT"Building project"$RSS_OUTPUT_END
 wget $DEPLOY_HOST -O $DEPLOY_PROJECT_LOCATION"index.html"
 if [[ $? -ne 0 ]]; then
-    echo "Error building project."
+    echo $RSS_OUTPUT"Error building project."$RSS_OUTPUT_END
     kill $NODE_PID
     exit 1
 fi
 
-echo "Deploying changes to swa"
+echo $RSS_OUTPUT"Deploying changes to swa"$RSS_OUTPUT_END
 swa deploy $DEPLOY_PROJECT_LOCATION --env $DEPLOY_ENV --app-name $APP_NAME --deployment-token $SWA_CLI_DEPLOYMENT_TOKEN
 if [[ $? -ne 0 ]]; then
-    echo "Error deploying to SWA."
+    echo $RSS_OUTPUT"Error deploying to SWA."$RSS_OUTPUT_END
     kill $NODE_PID
     exit 1
 fi
 
-echo "Success"
+rm -rf ./sync
+
+echo $RSS_OUTPUT"Success - $(date +'%d/%m/%Y %H:%M:%S')"$RSS_OUTPUT_END
 kill $NODE_PID

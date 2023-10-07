@@ -8,6 +8,8 @@ import expressLayouts from 'express-ejs-layouts';
 import { getOpenAIResponse } from './utils/openaiHandler.js';
 import fetch from 'node-fetch';
 
+const DEBUG = process.env.DEBUG || false;
+
 dotenv.config();
 
 const app = express();
@@ -74,11 +76,11 @@ async function handleHackerNoon(url, $, db, feedData, articleTitle, articleDate)
 
       );
     } else {
-      console.log("Skipping hackernoon article as there is no content");
+      if(DEBUG) console.log("Skipping hackernoon article as there is no content");
       return false;
     }
   } else {
-    console.log("Skipping hackernoon article as 'story-title' class doesn't exist");
+    if(DEBUG) console.log("Skipping hackernoon article as 'story-title' class doesn't exist");
     return false;
   }
 
@@ -243,12 +245,12 @@ app.get('/sync', async (req, res) => {
       let feedItems = [];
 
       for (const feedData of feedUrls) {
-          console.log("Fetching RSS feed: " + feedData.title);
+        if(DEBUG) console.log("Fetching RSS feed: " + feedData.title);
           //const response = await fetch(feedData.url);
           const response = await fetchWithTimeout(feedData.url);
           if(response === false) continue;
           const text = await response.text();
-          console.log("Parsing feed");
+          if(DEBUG) console.log("Parsing feed");
           const feed = await parser.parseString(text);
 
           for (const item of feed.items) {
@@ -261,13 +263,13 @@ app.get('/sync', async (req, res) => {
       }
 
       for (const feedData of nonFeedUrls) {
-          console.log("Fetching nonfeed: " + feedData.title);
+        if(DEBUG) console.log("Fetching nonfeed: " + feedData.title);
           //const response = await fetch(feedData.url);
           const response = await fetchWithTimeout(feedData.url);
           if(response === false) continue;
           const text = await response.text();
           //const wjsUrls = await getWSJArticleLinks(text);
-          console.log("Getting article links");
+          if(DEBUG) console.log("Getting article links");
 
           let articleUrls = null;
 
@@ -276,7 +278,7 @@ app.get('/sync', async (req, res) => {
 
           for (const item of articleUrls) {
 
-            console.log("Fetching: " + item.link);
+            if(DEBUG) console.log("Fetching: " + item.link);
               //const pageResponse = await fetch(item.link);
               const pageResponse = await fetchWithTimeout(feedData.url);
               if(pageResponse === false) continue;
@@ -291,7 +293,7 @@ app.get('/sync', async (req, res) => {
           }
       }
 
-      console.log("handling single page feeds");
+      if(DEBUG) console.log("handling single page feeds");
       // Handle single page feeds
       //const response = await fetch('https://help.openai.com/en/articles/6825453-chatgpt-release-notes');
       const response = await fetchWithTimeout('https://help.openai.com/en/articles/6825453-chatgpt-release-notes');
@@ -307,10 +309,10 @@ app.get('/sync', async (req, res) => {
         let articleTitle = page.title;
         let articleDate = new Date(page.pubDate || Date.now());
 
-        console.log(url);
+        if(DEBUG) console.log(url);
         const row = await checkDatabase(db, url);
         if (row) {
-            console.log("Single page article exists: " + url);
+          if(DEBUG) console.log("Single page article exists: " + url);
             const { summary, title, date } = row;
             articleTitle = title;
             articleDate = new Date(parseInt(date));
@@ -321,6 +323,9 @@ app.get('/sync', async (req, res) => {
           if(articleSummary === false){
             continue;//res.status(500).send(error.message);
           }
+          
+          console.log("Fetching new article (" + articleTitle + ").");
+
           console.log("Summary Added: " + articleSummary);
           db.run(
               `INSERT INTO feed_summaries (url, title, summary, feed_title, date) VALUES (?, ?, ?, ?, ?)`,
@@ -341,7 +346,7 @@ app.get('/sync', async (req, res) => {
     }
 
       feedItems.sort((a, b) => b.date - a.date);
-      console.log("Done syncing");
+      if(DEBUG) console.log("Done syncing");
       res.render('index', { feedItems, feedUrls });
   } catch (error) {
       res.status(500).send(error.message);
@@ -415,7 +420,7 @@ async function getArticleLinks(htmlContent) {
 
       const link = headlineFigure.attr('href');   // Extract the article's link.
       const title = $(headlineFigure).find('img').attr('alt').trim();
-      console.log(title + ": " + link);
+      if(DEBUG) console.log(title + ": " + link);
       const dateElement = $(element).find('time');
       const pubDate = dateElement.attr('datetime') || dateElement.text().trim(); // Get the publication date.
 
