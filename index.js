@@ -8,7 +8,7 @@ import expressLayouts from 'express-ejs-layouts';
 import { getOpenAIResponse } from './utils/openaiHandler.js';
 import fetch from 'node-fetch';
 
-const DEBUG = process.env.DEBUG || false;
+const DEBUG = process.env.DEBUG || true;
 
 dotenv.config();
 
@@ -169,11 +169,15 @@ const processFeedItem = async (db, item, feedData) => {
           if (feedData.title === 'HACKERNOON'){
 
             let ignoreText = 'The Noonification';
-            if (!articleTitle.includes(ignoreText)) {
-              articleSummary = await getOpenAIResponse($('main > div:first-child > :first-child:not(.exclude-class)').text());
+            if (articleTitle && !articleTitle.includes(ignoreText)) {
+                articleSummary = await getOpenAIResponse($('main > div:first-child > :first-child:not(.exclude-class)').text());
             }
-
-          }
+            else {
+              articleSummary = false;
+            }
+            
+        
+        }
           else if(feedData.title === 'lifehacker'){
             // lifehacker
             articleSummary = await getOpenAIResponse($('main').text());

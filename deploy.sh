@@ -19,7 +19,7 @@ else
 fi
 
 # Start the Node.js application in the background
-node index.js &
+node $DIR/index.js &
 # Get the process ID of the command we just ran (node index.js)
 NODE_PID=$!
 
@@ -54,7 +54,7 @@ if [[ $? -ne 0 ]]; then
     exit 1
 fi
 
-rm -rf ./sync
+rm -rf $DIR/sync
 
 echo $RSS_OUTPUT"Success - $(date +'%d/%m/%Y %H:%M:%S')"$RSS_OUTPUT_END
 kill $NODE_PID

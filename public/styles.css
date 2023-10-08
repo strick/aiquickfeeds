@@ -259,3 +259,13 @@ li:last-child {
 .share-button:hover {
     background-color: #0056b3;
 }
+.support-button {
+    padding: 10px 15px;
+  
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
