@@ -179,7 +179,7 @@ const processFeedItem = async (db, item, feedData) => {
           if (feedData.title === 'HACKERNOON'){
 
             let ignoreText = 'The Noonification';
-            if (articleTitle && !articleTitle.includes(ignoreText)) {
+            if (item.title && !item.title.includes(ignoreText)) {
                 articleSummary = await getOpenAIResponse($('main > div:first-child > :first-child:not(.exclude-class)').text());
             }
             else {
@@ -210,7 +210,7 @@ const processFeedItem = async (db, item, feedData) => {
           }
 
           if(articleSummary === false){
-            console.log("ERROR on article (" + feedData.tile + "): " + url);
+            console.log("ERROR on article (" + item.title + "): " + url);
             return false;//res.status(500).send(error.message);
           }
 
