@@ -8,9 +8,10 @@ import expressLayouts from 'express-ejs-layouts';
 import { getOpenAIResponse } from './utils/openaiHandler.js';
 import fetch from 'node-fetch';
 
-const DEBUG = process.env.DEBUG || true;
-
 dotenv.config();
+
+const DEBUG = process.env.DEBUG || true;
+const DB_URL = process.env.DB_URL;
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -92,8 +93,18 @@ app.get('/', async (req, res) => {
 
   try {
 
+    //console.log("DB: " + DB_URL + 'database.db');
     const sqlite = sqlite3.verbose();
-    let db = new sqlite3.Database('./database.db');
+    let db = await new sqlite3.Database(DB_URL + 'database.db', (err) => {
+      if (err) {
+
+          console.log(DB_URL + 'database.db')
+          console.error("Error opening the database:", err.message);
+          // Handle the error as needed, e.g., exit the process or retry.
+          process.exit(1); // Exits the process. You can choose other ways to handle the error.
+      }
+    });
+
     let feedItems = [];
 
     const rows = await getArticles(db);
