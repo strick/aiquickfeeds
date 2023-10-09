@@ -28,13 +28,15 @@ const feedUrls = [
   { url: 'https://library.educause.edu/topics/infrastructure-and-research-technologies/artificial-intelligence-ai?view=rss', title: 'EDUCAUSE' },
   { url: 'https://hackernoon.com/tagged/ai/feed', title: 'HACKERNOON'},
   { url: 'https://www.wired.com/feed/tag/ai/latest/rss', title: 'WIRED'},
-  { url: 'https://www.ai.gov/feed/', title: 'NAIIO'}
+  { url: 'https://www.ai.gov/feed/', title: 'NAIIO'},
+  { url: 'https://news.mit.edu/topic/mitartificial-intelligence2-rss.xml', title: 'MIT News'}
   //{ url: 'https://feeds.feedburner.com/blogspot/gJZg', title: 'Google Research'}
 ];
 
 const nonFeedUrls = [
 
  { url: 'https://lifehacker.com/tech/ai', title: 'lifehacker'},
+ //{ url: 'https://blogs.nvidia.com/blog/category/deep-learning/', title: 'NVIDIA'}
  
 ];
 
