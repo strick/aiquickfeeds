@@ -18,6 +18,10 @@ else
     RSS_OUTPUT_END=""
 fi
 
+source $DIR/.env || { echo $RSS_OUTPUT"Error sourcing .env"$RSS_OUTPUT_END; kill $NODE_PID; exit 1;}
+
+cd $PROJECT_ROOT
+
 # Start the Node.js application in the background
 node $DIR/index.js &
 # Get the process ID of the command we just ran (node index.js)
@@ -26,8 +30,6 @@ NODE_PID=$!
 while ! nc -z localhost 3000; do   
   sleep 0.1  # wait for 100ms before check again
 done
-
-source $DIR/.env || { echo $RSS_OUTPUT"Error sourcing .env"$RSS_OUTPUT_END; kill $NODE_PID; exit 1;}
 
 echo $RSS_OUTPUT"Begin feed sync"$RSS_OUTPUT_END
 wget $DEPLOY_HOST/sync

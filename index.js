@@ -10,7 +10,7 @@ import fetch from 'node-fetch';
 
 dotenv.config();
 
-const DEBUG = process.env.DEBUG || true;
+const DEBUG = process.env.DEBUG || false;
 const DB_URL = process.env.DB_URL;
 
 const app = express();
@@ -93,12 +93,11 @@ app.get('/', async (req, res) => {
 
   try {
 
-    //console.log("DB: " + DB_URL + 'database.db');
     const sqlite = sqlite3.verbose();
-    let db = await new sqlite3.Database(DB_URL + 'database.db', (err) => {
+    let db = await new sqlite3.Database(DB_URL, (err) => {
       if (err) {
 
-          console.log(DB_URL + 'database.db')
+          console.log(DB_URL)
           console.error("Error opening the database:", err.message);
           // Handle the error as needed, e.g., exit the process or retry.
           process.exit(1); // Exits the process. You can choose other ways to handle the error.
@@ -256,7 +255,15 @@ async function fetchWithTimeout(url, ms = 10000) {
 app.get('/sync', async (req, res) => {
   try {
       const sqlite = sqlite3.verbose();
-      let db = new sqlite3.Database('./database.db');
+      let db = new sqlite3.Database(DB_URL, (err) => {
+        if (err) {
+
+            console.log(DB_URL)
+            console.error("Error opening the database:", err.message);
+            // Handle the error as needed, e.g., exit the process or retry.
+            process.exit(1); // Exits the process. You can choose other ways to handle the error.
+        }
+      });
       let feedItems = [];
 
       for (const feedData of feedUrls) {
