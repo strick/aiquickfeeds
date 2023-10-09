@@ -4,7 +4,7 @@ import sqlite3 from 'sqlite3';
 async function deleteData() {
   const sqlite = sqlite3.verbose();
   let db = new sqlite.Database('./database.db');
- /* db.run(`DELETE FROM feed_summaries WHERE id = '304'`, function(err) {
+  db.run(`DELETE FROM feed_summaries WHERE id > '307'`, function(err) {
     if (err) {
       // Log the error message and throw the error
       console.error(err.message);
@@ -13,7 +13,7 @@ async function deleteData() {
     // Log the number of rows deleted
     console.log(`Deleted ${this.changes} row(s) successfully!`);
   });
-
+/*
   db.run(`DELETE FROM feed_summaries WHERE title like 'OpenAI'`, function(err) {
     if (err) {
       // Log the error message and throw the error

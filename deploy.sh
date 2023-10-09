@@ -23,16 +23,17 @@ source $DIR/.env || { echo $RSS_OUTPUT"Error sourcing .env"$RSS_OUTPUT_END; kill
 cd $PROJECT_ROOT
 
 # Start the Node.js application in the background
-node $DIR/index.js &
+PORT=$DEPLOY_PORT node $DIR/index.js &
+
 # Get the process ID of the command we just ran (node index.js)
 NODE_PID=$!
 
-while ! nc -z localhost 3000; do   
+while ! nc -z localhost $DEPLOY_PORT; do   
   sleep 0.1  # wait for 100ms before check again
 done
 
 echo $RSS_OUTPUT"Begin feed sync"$RSS_OUTPUT_END
-wget $DEPLOY_HOST/sync
+wget $DEPLOY_HOST:$DEPLOY_PORT/sync
 if [[ $? -ne 0 ]]; then
     echo $RSS_OUTPUT"Error syncing feed."$RSS_OUTPUT_END
     kill $NODE_PID
@@ -41,7 +42,7 @@ fi
 echo $RSS_OUTPUT"New articles have been sync'd"$RSS_OUTPUT_END
 
 echo $RSS_OUTPUT"Building project"$RSS_OUTPUT_END
-wget $DEPLOY_HOST -O $DEPLOY_PROJECT_LOCATION"index.html"
+wget $DEPLOY_HOST:$DEPLOY_PORT -O $DEPLOY_PROJECT_LOCATION"index.html"
 if [[ $? -ne 0 ]]; then
     echo $RSS_OUTPUT"Error building project."$RSS_OUTPUT_END
     kill $NODE_PID
