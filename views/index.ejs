@@ -1,8 +1,7 @@
 <% feedItems.forEach((item, index) => { %>
     <div class="article" id="<%= item.id %>" data-feed-index="<%= feedUrls.findIndex(feed => feed.title === item.feedTitle) %>">
-        <h2><a href="<%= item.url %>"><%= item.title %></a> <%= item.id %></h2>
-        <span class="article-date"><%= new Date(item.date).toDateString() %></span>
-        <h3 class="feed-title"><%= item.feedTitle %> </h3>                
+        <h2><a href="<%= item.url %>"><%= item.title %></a></h2>
+        <span class="article-date"><%= new Date(item.date).toDateString() %></span>                 
         <ul>
         <% 
         item.summary.split('\n').forEach(line => { 
