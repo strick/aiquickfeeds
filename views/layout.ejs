@@ -36,6 +36,7 @@
         <div class="sidebar">
             <h2>Feeds</h2>
             <button id="close-sidebar-btn" class="close-btn">×</button> <!-- This is the close button -->
+            <button id="show-all-btn">Show All</button>
             <% feedUrls.forEach((feed, index) => { %>
                 <p class="feed-toggle" data-feed-index="<%= index %>">
                     <i class="fas fa-eye toggle-icon"></i>
@@ -43,6 +44,7 @@
                 </p>
             <% }); %>
         </div>
+        
 
    
         <!-- Main content section -->
@@ -67,18 +69,62 @@
   
     <script>
         document.querySelectorAll('.feed-toggle').forEach(feedToggle => {
-            feedToggle.addEventListener('click', () => {
-                feedToggle.classList.toggle('inactive');
-                const icon = feedToggle.querySelector('.toggle-icon');
-                icon.classList.toggle('fa-eye');
-                icon.classList.toggle('fa-eye-slash');
-                // Toggle visibility of articles based on feed index
-                const feedIndex = feedToggle.getAttribute('data-feed-index');
-                document.querySelectorAll(`.article[data-feed-index="${feedIndex}"]`).forEach(article => {
+        feedToggle.addEventListener('click', () => {
+            const allFeeds = document.querySelectorAll('.article');
+            const feedIndex = feedToggle.getAttribute('data-feed-index');
+            const targetFeedArticles = document.querySelectorAll(`.article[data-feed-index="${feedIndex}"]`);
+            
+            // Check if all feeds are visible
+            let allVisible = true;
+            allFeeds.forEach(article => {
+                if (article.style.display === 'none') {
+                    allVisible = false;
+                }
+            });
+
+            if (allVisible) {
+                // If all feeds are visible, hide all but the clicked feed
+                allFeeds.forEach(article => {
+                    article.style.display = 'none';
+                });
+                targetFeedArticles.forEach(article => {
+                    article.style.display = '';
+                });
+            } else {
+                // Else, toggle only the clicked feed's visibility
+                targetFeedArticles.forEach(article => {
                     article.style.display = article.style.display === 'none' ? '' : 'none';
                 });
+            }
+
+            // Update visibility icons
+            allFeeds.forEach(article => {
+                const articleIndex = article.getAttribute('data-feed-index');
+                const toggle = document.querySelector(`.feed-toggle[data-feed-index="${articleIndex}"]`);
+                const icon = toggle.querySelector('.toggle-icon');
+                if (article.style.display === 'none') {
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                } else {
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
             });
         });
+    });
+
+document.getElementById('show-all-btn').addEventListener('click', () => {
+    // Show all articles and update toggle icons to 'fa-eye'
+    document.querySelectorAll('.article').forEach(article => {
+        article.style.display = '';
+    });
+
+    document.querySelectorAll('.feed-toggle .toggle-icon').forEach(icon => {
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    });
+});
+
 
         document.getElementById('toggle-sidebar-btn').addEventListener('click', () => {
             const sidebar = document.querySelector('.sidebar');
