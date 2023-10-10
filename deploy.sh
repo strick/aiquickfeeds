@@ -1,4 +1,6 @@
 #!/bin/bash
+source ~/.nvm/nvm.sh
+nvm use 18.17.1
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
@@ -52,6 +54,7 @@ if [[ $? -ne 0 ]]; then
 fi
 
 echo $RSS_OUTPUT"Deploying changes to swa"$RSS_OUTPUT_END
+echo "Using Node: $(node -v)"
 $CMD_SWA deploy $DEPLOY_PROJECT_LOCATION --env $DEPLOY_ENV --app-name $APP_NAME --deployment-token $SWA_CLI_DEPLOYMENT_TOKEN
 if [[ $? -ne 0 ]]; then
     echo $RSS_OUTPUT"Error deploying to SWA."$RSS_OUTPUT_END

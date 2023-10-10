@@ -12,7 +12,7 @@ import { getArticleLinks, getTechRadarArticleLinks, getOpenAIReleaseNotes } from
 
 dotenv.config();
 
-const DEBUG = true;//process.env.DEBUG || false;
+const DEBUG = process.env.DEBUG || false;
 const DB_URL = process.env.DB_URL;
 
 const app = express();
@@ -303,11 +303,11 @@ app.get('/sync', async (req, res) => {
           let articleUrls = null;
 
           if(feedData.title === 'techradar'){
-            console.log("Getting techrader artcles");
+            if(DEBUG) console.log("Getting techrader artcles");
             articleUrls = await getTechRadarArticleLinks(text);
           }
           else {
-            console.log("Getting article");
+            if(DEBUG) console.log("Getting article");
             articleUrls = await getArticleLinks(text);
           }
 
