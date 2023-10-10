@@ -22,6 +22,8 @@ source $DIR/.env || { echo $RSS_OUTPUT"Error sourcing .env"$RSS_OUTPUT_END; kill
 
 cd $PROJECT_ROOT
 
+fuser -k $DEPLOY_PORT/tcp || true  # Kill any process using the port
+
 # Start the Node.js application in the background
 PORT=$DEPLOY_PORT node $DIR/index.js &
 

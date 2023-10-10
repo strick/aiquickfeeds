@@ -10,7 +10,7 @@ import fetch from 'node-fetch';
 
 dotenv.config();
 
-const DEBUG = process.env.DEBUG || false;
+const DEBUG = true;//process.env.DEBUG || false;
 const DB_URL = process.env.DB_URL;
 
 const app = express();
@@ -29,14 +29,14 @@ const feedUrls = [
   { url: 'https://hackernoon.com/tagged/ai/feed', title: 'HACKERNOON'},
   { url: 'https://www.wired.com/feed/tag/ai/latest/rss', title: 'WIRED'},
   { url: 'https://www.ai.gov/feed/', title: 'NAIIO'},
-  { url: 'https://news.mit.edu/topic/mitartificial-intelligence2-rss.xml', title: 'MIT News'}
+  { url: 'https://news.mit.edu/topic/mitartificial-intelligence2-rss.xml', title: 'MIT News'},
+  { url: 'https://blogs.nvidia.com/blog/category/deep-learning/feed/', title: 'NVIDIA'}
   //{ url: 'https://feeds.feedburner.com/blogspot/gJZg', title: 'Google Research'}
 ];
 
 const nonFeedUrls = [
 
  { url: 'https://lifehacker.com/tech/ai', title: 'lifehacker'},
- //{ url: 'https://blogs.nvidia.com/blog/category/deep-learning/', title: 'NVIDIA'}
  
 ];
 
