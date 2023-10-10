@@ -6,34 +6,20 @@ function getWSJArticleLinks(htmlContent) {
     const $ = cheerio.load(htmlContent);
     const articles = [];
   
-    $('article.jsx-adf13c9b2a104cce h2').each((index, element) => {
-        // Extracting title (without date) from the current subheading.
-        const titleWithDate = $(element).text().trim();
-        const dateMatch = titleWithDate.match(/\(.*?\)/g);
-        const pubDate = dateMatch ? dateMatch[0].replace(/\(|\)/g, '') : null;
-        const title = titleWithDate.replace(/\(.*?\)/, '').trim();
+    $('div.listingResult').each((index, element) => {
   
-         // Extract content text following the title.
-        let content = "";
-        let nextElem = $(element).parent().next();
-        while(nextElem.length && !nextElem.find('h2').length) {
-            if(nextElem.text().trim()) {
-                content += nextElem.text().trim() + "\n";
-            }
-            nextElem = nextElem.next();
-        }
-
-
-        if (title && content) {
-            articles.push({ title, content, pubDate });
-        }
-  });
-
-
-    
-    
+        const articleAnchor = $(element).find('a.article-link');
+        const link = articleAnchor.attr('href');   // Extract the article's link.
+        const title = $(articleAnchor).find('h3.article-name').text().trim(); // Extract article title
+        //console.log(title + ": " + link);
+        const dateElement = $(articleAnchor).find('time');
+        const pubDate = dateElement.attr('datetime') || dateElement.text().trim(); // Get the publication date.
   
-
+        if (title && link) {
+            articles.push({ title, link, pubDate });
+        }
+    });
+  
     return articles;
 }
 

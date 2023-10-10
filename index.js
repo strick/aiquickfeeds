@@ -31,12 +31,12 @@ const feedUrls = [
   { url: 'https://www.ai.gov/feed/', title: 'NAIIO'},
   { url: 'https://news.mit.edu/topic/mitartificial-intelligence2-rss.xml', title: 'MIT News'},
   { url: 'https://blogs.nvidia.com/blog/category/deep-learning/feed/', title: 'NVIDIA'}
-  //{ url: 'https://feeds.feedburner.com/blogspot/gJZg', title: 'Google Research'}
 ];
 
 const nonFeedUrls = [
 
  { url: 'https://lifehacker.com/tech/ai', title: 'lifehacker'},
+ { url: 'https://www.techradar.com/computing/software/artificial-intelligence', title: 'techradar'}
  
 ];
 
@@ -190,6 +190,9 @@ const processFeedItem = async (db, item, feedData) => {
             
         
         }
+          else if(feedData.title === 'techradar'){
+            articleSummary = await getOpenAIResponse($('#article-body').text());
+          }
           else if(feedData.title === 'lifehacker'){
             // lifehacker
             articleSummary = await getOpenAIResponse($('main').text());
@@ -241,7 +244,7 @@ function timeout(ms) {
 }
 
 
-async function fetchWithTimeout(url, ms = 10000) {
+async function fetchWithTimeout(url, ms = 20000) {
   try {
       const response = await Promise.race([
           fetch(url),
@@ -297,8 +300,14 @@ app.get('/sync', async (req, res) => {
 
           let articleUrls = null;
 
-          
-          articleUrls = await getArticleLinks(text);
+          if(feedData.title === 'techradar'){
+            console.log("Getting techrader artcles");
+            articleUrls = await getTechRadarArticleLinks(text);
+          }
+          else {
+            console.log("Getting article");
+            articleUrls = await getArticleLinks(text);
+          }
 
           for (const item of articleUrls) {
 
@@ -378,31 +387,6 @@ app.get('/sync', async (req, res) => {
 });
 
 
-async function getWSJArticleLinks(htmlContent) {
-  const $ = cheerio.load(htmlContent);
-  const articles = [];
-
-  $('div.css-bdm6mo').each((index, element) => {
-      const headlineLink = $(element).find('a.e1rxbks6.css-1me4f21-HeadlineLink');
-      const dateElement = $(element).find('.css-cw5wgv-TimeTag'); 
-      
-      if (headlineLink.length) {
-          let title = headlineLink.text().trim();
-
-          if (title.includes('.css-')) {
-              title = title.replace(/.*\}(.*)/, '$1').trim();
-          }
-          
-          const link = headlineLink.attr('href');
-          const pubDate = dateElement.text().trim(); // Extract the date's text content.
-          articles.push({ title, link, pubDate });
-
-      }
-  });
-
-  return articles;
-}
-
 async function getOpenAIReleaseNotes(htmlContent){
   const $ = cheerio.load(htmlContent);
     const articles = [];
@@ -446,6 +430,27 @@ async function getArticleLinks(htmlContent) {
       const title = $(headlineFigure).find('img').attr('alt').trim();
       if(DEBUG) console.log(title + ": " + link);
       const dateElement = $(element).find('time');
+      const pubDate = dateElement.attr('datetime') || dateElement.text().trim(); // Get the publication date.
+
+      if (title && link) {
+          articles.push({ title, link, pubDate });
+      }
+  });
+
+  return articles;
+}
+
+async function getTechRadarArticleLinks(htmlContent) {
+  const $ = cheerio.load(htmlContent);
+  const articles = [];
+
+  $('div.listingResult').each((index, element) => {
+
+      const articleAnchor = $(element).find('a.article-link');
+      const link = articleAnchor.attr('href');   // Extract the article's link.
+      const title = $(articleAnchor).find('h3.article-name').text().trim(); // Extract article title
+      //console.log(title + ": " + link);
+      const dateElement = $(articleAnchor).find('time');
       const pubDate = dateElement.attr('datetime') || dateElement.text().trim(); // Get the publication date.
 
       if (title && link) {
