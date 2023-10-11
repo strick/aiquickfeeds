@@ -8,7 +8,9 @@ export async function getArticleLinks(htmlContent) {
   
         const headlineFigure = $(element).find('figure > a.sc-1out364-0');
   
+console.log("DDD");
         const link = headlineFigure.attr('href');   // Extract the article's link.
+        console.log("TET");
         const title = $(headlineFigure).find('img').attr('alt').trim();
         const dateElement = $(element).find('time');
         const pubDate = dateElement.attr('datetime') || dateElement.text().trim(); // Get the publication date.
