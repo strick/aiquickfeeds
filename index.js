@@ -1,16 +1,18 @@
-// Imports
+// External Libraries
 import express from 'express';
 import Parser from 'rss-parser';
 import cheerio from 'cheerio';
 import dotenv from 'dotenv';
 import sqlite3 from 'sqlite3';
 import expressLayouts from 'express-ejs-layouts';
-import { getOpenAIResponse } from './utils/openaiHandler.js';
 import fetch from 'node-fetch';
 
+// Custom Modules
+import { getOpenAIResponse } from './utils/openaiHandler.js';
 import { getArticleLinks, getTechRadarArticleLinks, getOpenAIReleaseNotes } from './helpers/articleHelper.js';
 
 dotenv.config();
+
 
 const DEBUG = process.env.DEBUG || false;
 const DB_URL = process.env.DB_URL;
