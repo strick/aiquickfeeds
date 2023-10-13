@@ -4,6 +4,16 @@ import sqlite3 from 'sqlite3';
 async function deleteData() {
   const sqlite = sqlite3.verbose();
   let db = new sqlite.Database('./database.db');
+  db.run(`DELETE FROM feed_summaries WHERE feed_title like 'MS:%'`, function(err) {
+    if (err) {
+      // Log the error message and throw the error
+      console.error(err.message);
+      throw err;
+    }
+    // Log the number of rows deleted
+    console.log(`Deleted ${this.changes} row(s) successfully!`);
+  });
+/*
   db.run(`DELETE FROM feed_summaries WHERE id > '393'`, function(err) {
     if (err) {
       // Log the error message and throw the error

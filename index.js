@@ -34,8 +34,8 @@ const feedUrls = [
   { url: 'https://news.mit.edu/topic/mitartificial-intelligence2-rss.xml', title: 'MIT News'},
   { url: 'https://blogs.nvidia.com/blog/category/deep-learning/feed/', title: 'NVIDIA'},
   { url: 'https://techcommunity.microsoft.com/plugins/custom/microsoft/o365/custom-blog-rss?tid=-3314434996627025474&board=AICustomerEngineeringTeam&size=10', title:'MS: AI Customer Engineering'},
-  { url: 'https://techcommunity.microsoft.com/plugins/custom/microsoft/o365/custom-blog-rss?tid=-3314434996627025474&board=MachineLearningBlog&size=10', title: 'MS: AI Machine Learning'},
-  { url: 'https://techcommunity.microsoft.com/plugins/custom/microsoft/o365/custom-blog-rss?tid=-3314434996627025474&board=Azure-AI-Services-blog&size=10', title: 'MS: Azure AI Services'}
+ // { url: 'https://techcommunity.microsoft.com/plugins/custom/microsoft/o365/custom-blog-rss?tid=-3314434996627025474&board=MachineLearningBlog&size=10', title: 'MS: AI Machine Learning'},
+ // { url: 'https://techcommunity.microsoft.com/plugins/custom/microsoft/o365/custom-blog-rss?tid=-3314434996627025474&board=Azure-AI-Services-blog&size=10', title: 'MS: Azure AI Services'}
 ];
 
 const nonFeedUrls = [
@@ -68,33 +68,6 @@ async function checkDatabase(db, url) {
     });
   });
 }
-
-async function handleHackerNoon(url, $, db, feedData, articleTitle, articleDate) {
-  if ($('.story-title').length) {
-    const articleContentDiv = $('main').nextAll('div:not([class]):first');
-    if (articleContentDiv.length) {
-      //const articleSummary = await getOpenAIResponse(articleContentDiv.text());
-      articleSummary = await getOpenAIResponse($('main > div:first-child > :first-child:not(.exclude-class)').text());
-      db.run(
-        `INSERT INTO feed_summaries (url, title, summary, feed_title, date) VALUES (?, ?, ?, ?, ?)`,
-        [url, articleTitle, articleSummary, feedData.title, articleDate],
-        (err) => {
-          if (err) throw err;
-        }
-
-      );
-    } else {
-      if(DEBUG) console.log("Skipping hackernoon article as there is no content");
-      return false;
-    }
-  } else {
-    if(DEBUG) console.log("Skipping hackernoon article as 'story-title' class doesn't exist");
-    return false;
-  }
-
-  return articleSummary;
-}
-
 
 app.get('/', async (req, res) => {
 
