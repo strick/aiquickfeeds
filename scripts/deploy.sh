@@ -4,9 +4,9 @@ nvm use 18.17.1
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-LOGFILE="$DIR/logs/logfile.log"
+LOGFILE="$DIR/../logs/logfile.log"
 
-DEPLOY_PROJECT_LOCATION=$DIR/static_site_deploy/
+DEPLOY_PROJECT_LOCATION=$DIR/../static_site_deploy/
 
 exec > >(tee -a "$LOGFILE") 2>&1  # Redirect stdout and stderr to the log file
 
@@ -20,14 +20,14 @@ else
     RSS_OUTPUT_END=""
 fi
 
-source $DIR/.env || { echo $RSS_OUTPUT"Error sourcing .env"$RSS_OUTPUT_END; kill $NODE_PID; exit 1;}
+source $DIR/../.env || { echo $RSS_OUTPUT"Error sourcing .env"$RSS_OUTPUT_END; kill $NODE_PID; exit 1;}
 
 cd $PROJECT_ROOT
 
 fuser -k $DEPLOY_PORT/tcp || true  # Kill any process using the port
 
 # Start the Node.js application in the background
-PORT=$DEPLOY_PORT $CMD_NODE $DIR/index.js &
+PORT=$DEPLOY_PORT $CMD_NODE $DIR/../index.js &
 
 # Get the process ID of the command we just ran (node index.js)
 NODE_PID=$!
