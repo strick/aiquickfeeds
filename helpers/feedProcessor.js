@@ -1,8 +1,8 @@
 import cheerio from 'cheerio';
 import fetch from 'node-fetch';
 
-import { getOpenAIResponse } from './utils/openaiHandler.js';
-import { checkDatabase } from './database.js';
+import { getOpenAIResponse } from '../utils/openaiHandler.js';
+import { checkDatabase } from '../database.js';
 
 export async function processFeedItem(db, item, feedData) {
     let url = item.link;
