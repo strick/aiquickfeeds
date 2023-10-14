@@ -1,4 +1,5 @@
 export const feedUrls = [
+
     { url: 'https://techcrunch.com/category/artificial-intelligence/feed/', title: 'TechCrunch' },
     { url: 'https://openai.com/blog/rss', title: 'OpenAI' },
     { url: 'https://library.educause.edu/topics/infrastructure-and-research-technologies/artificial-intelligence-ai?view=rss', title: 'EDUCAUSE' },
@@ -10,16 +11,18 @@ export const feedUrls = [
    // { url: 'https://techcommunity.microsoft.com/plugins/custom/microsoft/o365/custom-blog-rss?tid=-3314434996627025474&board=AICustomerEngineeringTeam&size=10', title:'MS: AI Customer Engineering'},
    // { url: 'https://techcommunity.microsoft.com/plugins/custom/microsoft/o365/custom-blog-rss?tid=-3314434996627025474&board=MachineLearningBlog&size=10', title: 'MS: AI Machine Learning'},
    // { url: 'https://techcommunity.microsoft.com/plugins/custom/microsoft/o365/custom-blog-rss?tid=-3314434996627025474&board=Azure-AI-Services-blog&size=10', title: 'MS: Azure AI Services'}
-  ];
   
-  export const nonFeedUrls = [
+];
+  
+export const nonFeedUrls = [
   
    { url: 'https://lifehacker.com/tech/ai', title: 'lifehacker'},
    { url: 'https://www.techradar.com/computing/software/artificial-intelligence', title: 'techradar'}
    
-  ];
+];
   
-  export const singlePageUrls = [
+export const singlePageUrls = [
   
     { url: 'https://help.openai.com/en/articles/6825453-chatgpt-release-notes', title: 'OpenAI Releases'}
-  ];
+    
+];
