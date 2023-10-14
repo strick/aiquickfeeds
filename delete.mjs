@@ -13,7 +13,7 @@ async function deleteData() {
     // Log the number of rows deleted
     console.log(`Deleted ${this.changes} row(s) successfully!`);
   });
-/*/
+/*
   db.run(`DELETE FROM feed_summaries WHERE id > '514'`, function(err) {
     if (err) {
       // Log the error message and throw the error
