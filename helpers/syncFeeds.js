@@ -3,7 +3,7 @@ import Parser from 'rss-parser';
 import { getOpenAIResponse } from '../utils/openaiHandler.js';
 import { getArticleLinks, getTechRadarArticleLinks, getOpenAIReleaseNotes } from './articleHelper.js';
 import { processFeedItem, fetchWithTimeout } from './feedProcessor.js';
-import { checkDatabase } from '../database.js';
+import { checkDatabase } from '../database/database.js';
 
 export async function syncFeed(feedData, db){
 

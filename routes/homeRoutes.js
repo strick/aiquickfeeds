@@ -1,7 +1,7 @@
 import express from 'express';
 import sqlite3 from 'sqlite3';
-import { getArticles } from '../database.js';
-import { feedUrls, nonFeedUrls, singlePageUrls } from '../config.js';
+import { getArticles } from '../database/database.js';
+import { feedUrls, nonFeedUrls, singlePageUrls } from '../configs/config.js';
 import { sortFeedItems, sortMergedUrls } from '../helpers/sortFeeds.js'
 
 const router = express.Router();
@@ -9,7 +9,7 @@ const router = express.Router();
 router.get('/', async (req, res, next) => {
   
     const DB_URL = process.env.DB_URL;
-    
+
     try {
         const sqlite = sqlite3.verbose();
         const db = await new sqlite3.Database(DB_URL, (err) => {

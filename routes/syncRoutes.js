@@ -1,6 +1,6 @@
 import express from 'express';
 import sqlite3 from 'sqlite3';
-import { feedUrls, nonFeedUrls } from '../config.js';
+import { feedUrls, nonFeedUrls } from '../configs/config.js';
 import { syncFeed, syncNonFeed, syncSinglePage } from '../helpers/syncFeeds.js'
 
 const router = express.Router();
