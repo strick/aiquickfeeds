@@ -5,10 +5,11 @@ import { feedUrls, nonFeedUrls, singlePageUrls } from '../config.js';
 import { sortFeedItems, sortMergedUrls } from '../helpers/sortFeeds.js'
 
 const router = express.Router();
-const DB_URL = process.env.DB_URL;
 
-router.get('/', async (req, res) => {
+router.get('/', async (req, res, next) => {
   
+    const DB_URL = process.env.DB_URL;
+    
     try {
         const sqlite = sqlite3.verbose();
         const db = await new sqlite3.Database(DB_URL, (err) => {
@@ -33,7 +34,7 @@ router.get('/', async (req, res) => {
   
         res.render('index', { feedItems, feedUrls: mergedUrls });
     } catch (error) {
-        res.status(500).send(error.message);
+        next(error);
     }
 
 });
