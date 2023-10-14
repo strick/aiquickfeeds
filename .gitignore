@@ -33,6 +33,7 @@ dist/
 
 tmp
 
+*.db
 database.db
 database.db.backup
 
