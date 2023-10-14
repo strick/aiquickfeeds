@@ -5,71 +5,29 @@ import cheerio from 'cheerio';
 import dotenv from 'dotenv';
 import sqlite3 from 'sqlite3';
 import expressLayouts from 'express-ejs-layouts';
-import fetch from 'node-fetch';
 
 // Custom Modules
 import { getOpenAIResponse } from './utils/openaiHandler.js';
 import { getArticleLinks, getTechRadarArticleLinks, getOpenAIReleaseNotes } from './helpers/articleHelper.js';
+import { getArticles, checkDatabase } from './database.js';
+import { processFeedItem, fetchWithTimeout } from './feedProcessor.js';
+import { feedUrls, nonFeedUrls, singlePageUrls } from './config.js';
 
 dotenv.config();
 
 
 const DEBUG = process.env.DEBUG || false;
 const DB_URL = process.env.DB_URL;
+const PORT = process.env.PORT || 3000;
+
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 const parser = new Parser();
 
 // App Configuration
 app.use(express.static('public'));
 app.use(expressLayouts);
 app.set('view engine', 'ejs');
-
-const feedUrls = [
-  { url: 'https://techcrunch.com/category/artificial-intelligence/feed/', title: 'TechCrunch' },
-  { url: 'https://openai.com/blog/rss', title: 'OpenAI' },
-  { url: 'https://library.educause.edu/topics/infrastructure-and-research-technologies/artificial-intelligence-ai?view=rss', title: 'EDUCAUSE' },
-  { url: 'https://hackernoon.com/tagged/ai/feed', title: 'HACKERNOON'},
-  { url: 'https://www.wired.com/feed/tag/ai/latest/rss', title: 'WIRED'},
-  { url: 'https://www.ai.gov/feed/', title: 'NAIIO'},
-  { url: 'https://news.mit.edu/topic/mitartificial-intelligence2-rss.xml', title: 'MIT News'},
-  { url: 'https://blogs.nvidia.com/blog/category/deep-learning/feed/', title: 'NVIDIA'},
-  { url: 'https://techcommunity.microsoft.com/plugins/custom/microsoft/o365/custom-blog-rss?tid=-3314434996627025474&board=AICustomerEngineeringTeam&size=10', title:'MS: AI Customer Engineering'},
- // { url: 'https://techcommunity.microsoft.com/plugins/custom/microsoft/o365/custom-blog-rss?tid=-3314434996627025474&board=MachineLearningBlog&size=10', title: 'MS: AI Machine Learning'},
- // { url: 'https://techcommunity.microsoft.com/plugins/custom/microsoft/o365/custom-blog-rss?tid=-3314434996627025474&board=Azure-AI-Services-blog&size=10', title: 'MS: Azure AI Services'}
-];
-
-const nonFeedUrls = [
-
- { url: 'https://lifehacker.com/tech/ai', title: 'lifehacker'},
- { url: 'https://www.techradar.com/computing/software/artificial-intelligence', title: 'techradar'}
- 
-];
-
-const singlePageUrls = [
-
-  { url: 'https://help.openai.com/en/articles/6825453-chatgpt-release-notes', title: 'OpenAI Releases'}
-];
-
-async function getArticles(db) {
-  return new Promise(resolve => {
-    db.all(`SELECT id, summary, url, title, feed_title, date FROM feed_summaries`, [], (err, rows) => {
-      if (err) throw err;
-      resolve(rows);
-    });
-  });
-}
-
-
-async function checkDatabase(db, url) {
-  return new Promise(resolve => {
-    db.get(`SELECT summary, url, title, feed_title, date FROM feed_summaries WHERE url = ?`, [url], (err, row) => {
-      if (err) throw err;
-      resolve(row);
-    });
-  });
-}
 
 app.get('/', async (req, res) => {
 
@@ -134,108 +92,7 @@ app.get('/', async (req, res) => {
 
 });
 
-const processFeedItem = async (db, item, feedData) => {
-  let url = item.link;
-  let articleTitle = item.title;
-  let articleDate = new Date(item.pubDate || Date.now());
-  let articleSummary = "";
-  
 
-  const row = await checkDatabase(db, url);
-
-  if (row) {
-      //console.log("Article exists: " + url);
-      const { summary, title, date } = row;
-      articleTitle = title;
-      articleDate = new Date(parseInt(date));
-      articleSummary = summary;
-  } else {
-      console.log("Fetching new article (" + item.title + ").");
-      const pageResponse = await fetch(item.link);
-      const pageText = await pageResponse.text();
-      const $ = cheerio.load(pageText);
-
-
-
-          //hackernoon
-          if (feedData.title === 'HACKERNOON'){
-
-            let ignoreText = 'The Noonification';
-            if (item.title && !item.title.includes(ignoreText)) {
-                articleSummary = await getOpenAIResponse($('main > div:first-child > :first-child:not(.exclude-class)').text());
-            }
-            else {
-              articleSummary = false;
-            }
-            
-        
-        }
-          else if(feedData.title === 'techradar'){
-            articleSummary = await getOpenAIResponse($('#article-body').text());
-          }
-          else if(feedData.title === 'lifehacker'){
-            // lifehacker
-            articleSummary = await getOpenAIResponse($('main').text());
-          }
-          else if(feedData.title === 'OpenAI'){
-
-            // Handle research paper abstracts
-            if(url.includes('/research/')){
-              articleSummary = await getOpenAIResponse($('div.container').text());
-            }
-            
-            // Handle blog articles
-            else {
-              articleSummary = await getOpenAIResponse($('div#content').text());
-            }
-          }
-          else {
-            articleSummary = await getOpenAIResponse($('article').text());
-
-          }
-
-          if(articleSummary === false){
-            console.log("ERROR on article (" + item.title + "): " + url);
-            return false;//res.status(500).send(error.message);
-          }
-
-          console.log("Summary Added: " + articleSummary);
-          db.run(
-              `INSERT INTO feed_summaries (url, title, summary, feed_title, date) VALUES (?, ?, ?, ?, ?)`,
-              [url, articleTitle, articleSummary, feedData.title, articleDate],
-              (err) => {
-                  if (err) throw err;
-              }
-          );
-      //}
-  }
-
-  return {
-      url,
-      title: articleTitle,
-      feedTitle: feedData.title,
-      date: articleDate,
-      summary: articleSummary
-  };
-};
-
-function timeout(ms) {
-  return new Promise((_, reject) => setTimeout(() => reject(new Error('Request timed out')), ms));
-}
-
-
-async function fetchWithTimeout(url, ms = 20000) {
-  try {
-      const response = await Promise.race([
-          fetch(url),
-          timeout(ms)
-      ]);
-      return await response;//.text();
-  } catch (error) {
-      console.error("Fetch operation timed out or another error occurred:", error.message);
-      return false;
-  }
-}
 
 app.get('/sync', async (req, res) => {
   try {
