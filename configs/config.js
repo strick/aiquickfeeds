@@ -17,7 +17,8 @@ export const feedUrls = [
 export const nonFeedUrls = [
   
    { url: 'https://lifehacker.com/tech/ai', title: 'lifehacker'},
-   { url: 'https://www.techradar.com/computing/software/artificial-intelligence', title: 'techradar'}
+   { url: 'https://www.techradar.com/computing/software/artificial-intelligence', title: 'techradar'},
+//   { url: 'https://www.technologyreview.com/topic/artificial-intelligence/feed', title: 'MIT Technology Review'}
    
 ];
   
